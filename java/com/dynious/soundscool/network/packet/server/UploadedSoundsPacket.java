@@ -1,8 +1,9 @@
-package com.dynious.soundscool.network.packet;
+package com.dynious.soundscool.network.packet.server;
 
 import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
 

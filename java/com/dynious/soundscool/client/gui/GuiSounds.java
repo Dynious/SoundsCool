@@ -4,8 +4,8 @@ import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.client.audio.SoundPlayer;
-import com.dynious.soundscool.network.packet.ClientSoundPacket;
-import com.dynious.soundscool.network.packet.GetUploadedSoundsPacket;
+import com.dynious.soundscool.network.packet.client.ClientSoundPacket;
+import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.sound.Sound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -16,9 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import javax.swing.*;
 
-public class GuiSounds extends GuiScreen
+public class GuiSounds extends GuiScreen implements IListGui
 {
-    private GuiSoundsList soundsList;
+    private GuiLocalSoundsList soundsList;
     private int selected = -1;
     private Sound selectedSound;
     private JFileChooser fileChooser;
@@ -34,7 +34,7 @@ public class GuiSounds extends GuiScreen
     public void initGui()
     {
         super.initGui();
-        soundsList = new GuiSoundsList(this, 150);
+        soundsList = new GuiLocalSoundsList(this, 150);
         this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.getStringParams("gui.done")));
         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 75, 38, "Select File"));
         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 75, field_146295_m/2 - 20, "Play Sound"));
@@ -87,16 +87,19 @@ public class GuiSounds extends GuiScreen
         }
     }
 
-    Minecraft getMinecraftInstance()
+    @Override
+    public Minecraft getMinecraftInstance()
     {
         return field_146297_k;
     }
 
-    FontRenderer getFontRenderer()
+    @Override
+    public FontRenderer getFontRenderer()
     {
         return field_146289_q;
     }
 
+    @Override
     public void selectSoundIndex(int selected)
     {
         this.selected = selected;
@@ -111,8 +114,27 @@ public class GuiSounds extends GuiScreen
         }
     }
 
+    @Override
     public boolean soundIndexSelected(int var1)
     {
         return var1 == selected;
+    }
+
+    @Override
+    public int getWidth()
+    {
+        return field_146295_m;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        return field_146295_m;
+    }
+
+    @Override
+    public void drawBackground()
+    {
+        func_146276_q_();
     }
 }

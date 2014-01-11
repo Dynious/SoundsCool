@@ -1,8 +1,9 @@
-package com.dynious.soundscool.network.packet;
+package com.dynious.soundscool.network.packet.server;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.helper.GuiHelper;
+import com.dynious.soundscool.network.packet.IPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;

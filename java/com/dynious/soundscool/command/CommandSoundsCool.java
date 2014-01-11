@@ -1,11 +1,8 @@
 package com.dynious.soundscool.command;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.client.gui.GuiSounds;
 import com.dynious.soundscool.lib.Commands;
-import com.dynious.soundscool.network.packet.OpenGUIPacket;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
+import com.dynious.soundscool.network.packet.server.OpenGUIPacket;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;

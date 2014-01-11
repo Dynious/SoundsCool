@@ -1,6 +1,11 @@
 package com.dynious.soundscool.network;
 
 import com.dynious.soundscool.network.packet.*;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
+import com.dynious.soundscool.network.packet.client.ClientPlaySoundPacket;
+import com.dynious.soundscool.network.packet.client.ClientSoundPacket;
+import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
+import com.dynious.soundscool.network.packet.server.*;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,7 +19,9 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         SOUNDNOTFOUND,
         OPENGUI,
         GETUPLOADEDSOUNDS,
-        UPLOADEDSOUNDS
+        UPLOADEDSOUNDS,
+        CLIENTPLAYSOUND,
+        SERVERPLAYSOUND
     }
 
     public ChannelHandler() {
@@ -25,6 +32,8 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         addDiscriminator(Packets.OPENGUI.ordinal(), OpenGUIPacket.class);
         addDiscriminator(Packets.GETUPLOADEDSOUNDS.ordinal(), GetUploadedSoundsPacket.class);
         addDiscriminator(Packets.UPLOADEDSOUNDS.ordinal(), UploadedSoundsPacket.class);
+        addDiscriminator(Packets.CLIENTPLAYSOUND.ordinal(), ClientPlaySoundPacket.class);
+        addDiscriminator(Packets.SERVERPLAYSOUND.ordinal(), ServerPlaySoundPacket.class);
     }
 
     @Override

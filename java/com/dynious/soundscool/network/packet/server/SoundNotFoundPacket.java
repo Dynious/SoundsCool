@@ -1,6 +1,7 @@
-package com.dynious.soundscool.network.packet;
+package com.dynious.soundscool.network.packet.server;
 
 import com.dynious.soundscool.handler.DelayedPlayHandler;
+import com.dynious.soundscool.network.packet.IPacket;
 import io.netty.buffer.ByteBuf;
 
 public class SoundNotFoundPacket implements IPacket

@@ -1,40 +1,34 @@
-package com.dynious.soundscool.network.packet;
+package com.dynious.soundscool.network.packet.server;
 
+import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 import java.io.File;
 
-public class ClientSoundPacket implements IPacket
+public class ServerSoundPacket implements IPacket
 {
     File soundFile;
-    String category;
     String fileName;
-    public ClientSoundPacket()
+    public ServerSoundPacket()
     {
     }
 
-    public ClientSoundPacket(Sound sound, EntityPlayer player)
+    public ServerSoundPacket(Sound sound)
     {
         this.soundFile = sound.getSoundLocation();
-        this.category = player.getDisplayName();
         this.fileName = sound.getSoundName();
     }
 
     @Override
     public void readBytes(ByteBuf bytes)
     {
-        int catLength = bytes.readInt();
-        char[] catCars = new char[catLength];
-        for (int i = 0; i < catLength; i++)
-        {
-            catCars[i] = bytes.readChar();
-        }
-        category = String.valueOf(catCars);
-
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
         for (int i = 0; i < fileLength; i++)
@@ -49,18 +43,14 @@ public class ClientSoundPacket implements IPacket
         {
             soundByteArr[i] = bytes.readByte();
         }
-        NetworkHelper.createFileFromByteArr(soundByteArr, category, fileName);
+        NetworkHelper.createFileFromByteArr(soundByteArr, Minecraft.getMinecraft().func_147104_D().serverName, fileName);
         SoundHandler.findSounds();
+        DelayedPlayHandler.onSoundReceived(fileName);
     }
 
     @Override
     public void writeBytes(ByteBuf bytes)
     {
-        bytes.writeInt(category.length());
-        for (char c : category.toCharArray())
-        {
-            bytes.writeChar(c);
-        }
         bytes.writeInt(fileName.length());
         for (char c : fileName.toCharArray())
         {

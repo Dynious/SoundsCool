@@ -2,7 +2,7 @@ package com.dynious.soundscool.handler;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
-import com.dynious.soundscool.network.packet.CheckPresencePacket;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
 import com.dynious.soundscool.sound.Sound;
 import com.google.common.io.Files;
 import cpw.mods.fml.relauncher.Side;
