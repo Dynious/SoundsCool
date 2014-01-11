@@ -2,8 +2,8 @@ package com.dynious.soundscool.network.packet.client;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.network.packet.server.ServerSoundPacket;
 import com.dynious.soundscool.network.packet.server.SoundNotFoundPacket;
 import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -47,15 +47,13 @@ public class CheckPresencePacket implements IPacket
         {
             Sound sound = SoundHandler.getSound(fileName);
 
-            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set((EntityPlayer) entity);
             if (sound != null)
             {
-                SoundsCool.proxy.getServerChannel().writeOutbound(new ServerSoundPacket(sound));
+                NetworkHelper.serverSoundUpload(sound, (EntityPlayer) entity);
             }
             else
             {
-                SoundsCool.proxy.getServerChannel().writeOutbound(new SoundNotFoundPacket(fileName));
+                NetworkHelper.sendPacketToPlayer(new SoundNotFoundPacket(fileName), (EntityPlayer)entity);
             }
         }
     }

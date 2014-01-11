@@ -1,10 +1,9 @@
 package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.handler.NetworkHandler;
-import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.client.audio.SoundPlayer;
-import com.dynious.soundscool.network.packet.client.ClientSoundPacket;
+import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.sound.Sound;
 import net.minecraft.client.Minecraft;
@@ -27,7 +26,7 @@ public class GuiSounds extends GuiScreen implements IListGui
     public GuiSounds(EntityPlayer player)
     {
         this.player = player;
-        SoundsCool.proxy.getClientChannel().writeOutbound(new GetUploadedSoundsPacket(player));
+        SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
     }
 
     @Override
@@ -78,9 +77,7 @@ public class GuiSounds extends GuiScreen implements IListGui
                     if (selectedSound != null)
                     {
                         Sound sound = SoundHandler.setupSound(selectedSound.getSoundLocation());
-
-                        SoundsCool.proxy.getClientChannel().writeOutbound(new ClientSoundPacket(sound, player));
-                        NetworkHandler.uploadedSounds.add(selectedSound.getSoundName());
+                        NetworkHelper.clientSoundUpload(sound);
                     }
                     break;
             }

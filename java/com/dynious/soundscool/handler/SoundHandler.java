@@ -99,7 +99,7 @@ public class SoundHandler
         else
         {
             DelayedPlayHandler.addDelayedPlay(soundName, x, y, z);
-            SoundsCool.proxy.getClientChannel().writeOutbound(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));
+            SoundsCool.proxy.getChannel().writeOutbound(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));
         }
     }
     @SideOnly(Side.CLIENT)

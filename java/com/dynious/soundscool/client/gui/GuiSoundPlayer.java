@@ -2,7 +2,6 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.NetworkHandler;
-import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.client.ClientPlaySoundPacket;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
@@ -23,7 +22,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     public GuiSoundPlayer(TileSoundPlayer tile)
     {
         this.tile = tile;
-        SoundsCool.proxy.getClientChannel().writeOutbound(new GetUploadedSoundsPacket(Minecraft.getMinecraft().thePlayer));
+        SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(Minecraft.getMinecraft().thePlayer));
     }
 
     @Override
@@ -48,9 +47,9 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
             switch (button.field_146127_k)
             {
                 case 0:
-                    SoundsCool.proxy.getClientChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-                    SoundsCool.proxy.getClientChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(tile.func_145831_w().provider.dimensionId, tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, 64));
-                    SoundsCool.proxy.getClientChannel().writeOutbound(new ClientPlaySoundPacket(selectedSound, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e));
+                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(tile.func_145831_w().provider.dimensionId, tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, 64));
+                    SoundsCool.proxy.getChannel().writeOutbound(new ClientPlaySoundPacket(selectedSound, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e));
                     break;
             }
     }

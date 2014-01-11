@@ -1,9 +1,7 @@
 package com.dynious.soundscool.network.packet.server;
 
 import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.helper.GuiHelper;
 import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
 
 public class ServerPlaySoundPacket implements IPacket

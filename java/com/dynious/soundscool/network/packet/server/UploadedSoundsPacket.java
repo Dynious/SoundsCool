@@ -1,6 +1,5 @@
 package com.dynious.soundscool.network.packet.server;
 
-import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.IPacket;
@@ -31,7 +30,6 @@ public class UploadedSoundsPacket implements IPacket
             soundList.add(String.valueOf(fileCars));
         }
         NetworkHandler.uploadedSounds = soundList;
-        System.out.println(NetworkHandler.uploadedSounds);
     }
 
     @Override

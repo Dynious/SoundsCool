@@ -1,6 +1,7 @@
 package com.dynious.soundscool.network.packet.client;
 
 import com.dynious.soundscool.SoundsCool;
+import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.network.packet.server.UploadedSoundsPacket;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -33,10 +34,7 @@ public class GetUploadedSoundsPacket implements IPacket
         Entity entity = DimensionManager.getProvider(worldID).worldObj.getEntityByID(entityID);
         if (entity != null && entity instanceof EntityPlayer)
         {
-
-            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set((EntityPlayer) entity);
-            SoundsCool.proxy.getServerChannel().writeOutbound(new UploadedSoundsPacket());
+            NetworkHelper.sendPacketToPlayer(new UploadedSoundsPacket(), (EntityPlayer) entity);
         }
     }
 

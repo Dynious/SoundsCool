@@ -1,9 +1,7 @@
 package com.dynious.soundscool.block;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.client.gui.GuiSoundPlayer;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -43,4 +41,5 @@ public class BlockSoundPlayer extends BlockContainer
         }
         return true;
     }
+
 }

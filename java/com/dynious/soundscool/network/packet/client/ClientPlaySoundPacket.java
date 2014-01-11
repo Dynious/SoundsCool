@@ -1,10 +1,8 @@
 package com.dynious.soundscool.network.packet.client;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.network.packet.server.ServerPlaySoundPacket;
-import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
@@ -42,9 +40,9 @@ public class ClientPlaySoundPacket implements IPacket
         x = bytes.readInt();
         y = bytes.readInt();
         z = bytes.readInt();
-        SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-        SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(dimensionId, x, y, z, 64));
-        SoundsCool.proxy.getServerChannel().writeOutbound(new ServerPlaySoundPacket(soundName, x, y, z));
+        SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+        SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(dimensionId, x, y, z, 64));
+        SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(soundName, x, y, z));
     }
 
     @Override

@@ -2,13 +2,9 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.client.GuiScrollingList;
 import net.minecraft.client.renderer.Tessellator;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class GuiLocalSoundsList extends GuiScrollingList
 {

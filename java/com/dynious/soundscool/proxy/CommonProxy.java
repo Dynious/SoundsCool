@@ -31,11 +31,8 @@ public class CommonProxy
 
     }
 
-    public EmbeddedChannel getServerChannel() {
+    public EmbeddedChannel getChannel()
+    {
         return channel.get(Side.SERVER);
-    }
-
-    public EmbeddedChannel getClientChannel() {
-        return channel.get(Side.CLIENT);
     }
 }

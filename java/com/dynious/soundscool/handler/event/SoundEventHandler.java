@@ -1,9 +1,7 @@
 package com.dynious.soundscool.handler.event;
 
-import com.dynious.soundscool.SoundsCool;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import de.cuina.fireandfuel.CodecJLayerMP3;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.SoundSystemException;

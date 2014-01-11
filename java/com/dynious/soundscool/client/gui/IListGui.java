@@ -1,6 +1,5 @@
 package com.dynious.soundscool.client.gui;
 
-import com.dynious.soundscool.handler.SoundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 

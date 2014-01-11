@@ -2,7 +2,6 @@ package com.dynious.soundscool.handler;
 
 import com.dynious.soundscool.client.gui.GuiSoundPlayer;
 import com.dynious.soundscool.client.gui.GuiSounds;
-import com.dynious.soundscool.inventory.ContainerSounds;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
