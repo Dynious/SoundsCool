@@ -4,26 +4,22 @@ import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
 
-public class CheckPresencePacket implements IPacket
+public class GetUploadedSoundsPacket implements IPacket
 {
-    String fileName;
     int entityID;
     int worldID;
 
-    public CheckPresencePacket()
+    public GetUploadedSoundsPacket()
     {
     }
 
-    public CheckPresencePacket(String soundName, EntityPlayer player)
+    public GetUploadedSoundsPacket(EntityPlayer player)
     {
-        this.fileName = soundName;
         this.entityID = player.func_145782_y();
         this.worldID = player.getEntityWorld().provider.dimensionId;
     }
@@ -31,42 +27,22 @@ public class CheckPresencePacket implements IPacket
     @Override
     public void readBytes(ByteBuf bytes)
     {
-        int fileLength = bytes.readInt();
-        char[] fileCars = new char[fileLength];
-        for (int i = 0; i < fileLength; i++)
-        {
-            fileCars[i] = bytes.readChar();
-        }
-        fileName = String.valueOf(fileCars);
         entityID = bytes.readInt();
         worldID = bytes.readInt();
 
         Entity entity = DimensionManager.getProvider(worldID).worldObj.getEntityByID(entityID);
         if (entity != null && entity instanceof EntityPlayer)
         {
-            Sound sound = SoundHandler.getSound(fileName);
 
             SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
             SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set((EntityPlayer) entity);
-            if (sound != null)
-            {
-                SoundsCool.proxy.getServerChannel().writeOutbound(new ServerSoundPacket(sound));
-            }
-            else
-            {
-                SoundsCool.proxy.getServerChannel().writeOutbound(new SoundNotFoundPacket(fileName));
-            }
+            SoundsCool.proxy.getServerChannel().writeOutbound(new UploadedSoundsPacket());
         }
     }
 
     @Override
     public void writeBytes(ByteBuf bytes)
     {
-        bytes.writeInt(fileName.length());
-        for (char c : fileName.toCharArray())
-        {
-            bytes.writeChar(c);
-        }
         bytes.writeInt(entityID);
         bytes.writeInt(worldID);
     }

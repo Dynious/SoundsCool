@@ -3,8 +3,10 @@ package com.dynious.soundscool.command;
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.gui.GuiSounds;
 import com.dynious.soundscool.lib.Commands;
+import com.dynious.soundscool.network.packet.OpenGUIPacket;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -39,7 +41,9 @@ public class CommandSoundsCool extends CommandBase
         if (commandSender instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer)commandSender;
-            player.openGui(SoundsCool.instance, 0, player.worldObj, (int)player.posX, (int)player.posY, (int)player.posZ);
+            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
+            SoundsCool.proxy.getServerChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+            SoundsCool.proxy.getServerChannel().writeOutbound(new OpenGUIPacket(0));
         }
     }
 

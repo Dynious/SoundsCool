@@ -1,6 +1,5 @@
 package com.dynious.soundscool.proxy;
 
-import com.dynious.soundscool.client.sound.SoundPlayer;
 import com.dynious.soundscool.lib.Names;
 import com.dynious.soundscool.lib.Reference;
 import com.dynious.soundscool.network.ChannelHandler;
@@ -27,16 +26,16 @@ public class CommonProxy
         channel = NetworkRegistry.INSTANCE.newChannel(Reference.modid, new ChannelHandler());
     }
 
+    public void soundSetup()
+    {
+
+    }
+
     public EmbeddedChannel getServerChannel() {
         return channel.get(Side.SERVER);
     }
 
     public EmbeddedChannel getClientChannel() {
         return channel.get(Side.CLIENT);
-    }
-
-    public void initSounds()
-    {
-
     }
 }

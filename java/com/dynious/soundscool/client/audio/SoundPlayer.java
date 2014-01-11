@@ -1,4 +1,4 @@
-package com.dynious.soundscool.client.sound;
+package com.dynious.soundscool.client.audio;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

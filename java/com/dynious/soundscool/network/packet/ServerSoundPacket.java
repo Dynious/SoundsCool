@@ -1,37 +1,33 @@
 package com.dynious.soundscool.network.packet;
 
+import com.dynious.soundscool.handler.DelayedPlayHandler;
+import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 
 import java.io.File;
 
-public class SoundPacket implements IPacket
+public class ServerSoundPacket implements IPacket
 {
-    File sound;
-    String category;
+    File soundFile;
     String fileName;
-    public SoundPacket()
+    public ServerSoundPacket()
     {
     }
 
-    public SoundPacket(File sound, String category, String fileName)
+    public ServerSoundPacket(Sound sound)
     {
-        this.sound = sound;
-        this.category = category;
-        this.fileName = fileName;
+        this.soundFile = sound.getSoundLocation();
+        this.fileName = sound.getSoundName();
     }
 
     @Override
     public void readBytes(ByteBuf bytes)
     {
-        int catLength = bytes.readInt();
-        char[] catCars = new char[catLength];
-        for (int i = 0; i < catLength; i++)
-        {
-            catCars[i] = bytes.readChar();
-        }
-        category = String.valueOf(catCars);
-
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
         for (int i = 0; i < fileLength; i++)
@@ -46,23 +42,20 @@ public class SoundPacket implements IPacket
         {
             soundByteArr[i] = bytes.readByte();
         }
-        NetworkHelper.createFileFromByteArr(soundByteArr, category, fileName);
+        NetworkHelper.createFileFromByteArr(soundByteArr, Minecraft.getMinecraft().func_147104_D().serverName, fileName);
+        SoundHandler.findSounds();
+        DelayedPlayHandler.onSoundReceived(fileName);
     }
 
     @Override
     public void writeBytes(ByteBuf bytes)
     {
-        bytes.writeInt(category.length());
-        for (char c : category.toCharArray())
-        {
-            bytes.writeChar(c);
-        }
         bytes.writeInt(fileName.length());
         for (char c : fileName.toCharArray())
         {
             bytes.writeChar(c);
         }
-        byte[] soundByteArr = NetworkHelper.convertFileToByteArr(sound);
+        byte[] soundByteArr = NetworkHelper.convertFileToByteArr(soundFile);
         bytes.writeInt(soundByteArr.length);
         bytes.writeBytes(soundByteArr);
     }

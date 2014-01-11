@@ -1,6 +1,6 @@
 package com.dynious.soundscool.helper;
 
-import com.dynious.soundscool.client.sound.SoundHandler;
+import com.dynious.soundscool.handler.SoundHandler;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
@@ -35,10 +35,5 @@ public class NetworkHelper
                 e.printStackTrace();
             }
         }
-    }
-
-    public static boolean hasServerSound(String soundName)
-    {
-        return true;
     }
 }

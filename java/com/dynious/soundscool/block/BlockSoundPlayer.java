@@ -38,8 +38,7 @@ public class BlockSoundPlayer extends BlockContainer
             TileEntity tile = world.func_147438_o(x, y, z);
             if (tile != null && tile instanceof TileSoundPlayer)
             {
-                player.openGui(SoundsCool.instance, 0, world, x, y, z);
-                //FMLCommonHandler.instance().showGuiScreen(new GuiSoundPlayer((TileSoundPlayer)tile));
+                player.openGui(SoundsCool.instance, 1, world, x, y, z);
             }
         }
         return true;

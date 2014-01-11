@@ -1,9 +1,12 @@
 package com.dynious.soundscool.handler;
 
+import com.dynious.soundscool.client.gui.GuiSoundPlayer;
 import com.dynious.soundscool.client.gui.GuiSounds;
 import com.dynious.soundscool.inventory.ContainerSounds;
+import com.dynious.soundscool.tileentity.TileSoundPlayer;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class GuiHandler implements IGuiHandler
@@ -13,9 +16,6 @@ public class GuiHandler implements IGuiHandler
     {
         switch(ID)
         {
-            case 0:
-                System.out.println("Opening CON");
-                return new ContainerSounds();
             default:
                 return null;
         }
@@ -29,6 +29,13 @@ public class GuiHandler implements IGuiHandler
             case 0:
                 System.out.println("Opening GUI");
                 return new GuiSounds(player);
+            case 1:
+                System.out.println("Opening GUI");
+                TileEntity tile = world.func_147438_o(x, y, z);
+                if (tile != null && tile instanceof TileSoundPlayer)
+                {
+                    return new GuiSoundPlayer((TileSoundPlayer)tile);
+                }
             default:
                 return null;
         }
