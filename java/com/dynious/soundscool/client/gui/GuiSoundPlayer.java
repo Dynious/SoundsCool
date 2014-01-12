@@ -4,6 +4,8 @@ import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.network.packet.client.ClientPlaySoundPacket;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
+import com.dynious.soundscool.network.packet.client.SoundPlayerPlayPacket;
+import com.dynious.soundscool.network.packet.client.SoundPlayerSelectPacket;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -16,8 +18,6 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
 {
     private GuiRemoteSoundsList soundsList;
     private TileSoundPlayer tile;
-    private int selected = -1;
-    private String selectedSound = "";
 
     public GuiSoundPlayer(TileSoundPlayer tile)
     {
@@ -47,9 +47,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
             switch (button.field_146127_k)
             {
                 case 0:
-                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(tile.func_145831_w().provider.dimensionId, tile.field_145851_c, tile.field_145848_d, tile.field_145849_e, 64));
-                    SoundsCool.proxy.getChannel().writeOutbound(new ClientPlaySoundPacket(selectedSound, tile.func_145831_w(), tile.field_145851_c, tile.field_145848_d, tile.field_145849_e));
+                    SoundsCool.proxy.getChannel().writeOutbound(new SoundPlayerPlayPacket(tile));
                     break;
             }
     }
@@ -69,22 +67,13 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     @Override
     public void selectSoundIndex(int selected)
     {
-        this.selected = selected;
-
-        if (selected >= 0 && selected <= NetworkHandler.uploadedSounds.size())
-        {
-            this.selectedSound = NetworkHandler.uploadedSounds.get(selected);
-        }
-        else
-        {
-            this.selectedSound = null;
-        }
+        tile.selectSoundIndex(selected);
     }
 
     @Override
     public boolean soundIndexSelected(int var1)
     {
-        return var1 == selected;
+        return tile.getSelected() == var1;
     }
 
     @Override
