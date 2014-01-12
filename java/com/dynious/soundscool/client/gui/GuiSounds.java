@@ -6,6 +6,7 @@ import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
+import com.dynious.soundscool.network.packet.client.RemoveSoundPacket;
 import com.dynious.soundscool.sound.Sound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -16,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GuiSounds extends GuiScreen implements IListGui
 {
@@ -24,10 +26,13 @@ public class GuiSounds extends GuiScreen implements IListGui
     private Sound selectedSound;
     private JFileChooser fileChooser;
     private EntityPlayer player;
+    private GuiButton uploadButton;
 
     public GuiSounds(EntityPlayer player)
     {
         this.player = player;
+        fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Sound Files (.ogg, .wav, .mp3)", "ogg", "wav", "mp3"));
         SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
     }
 
@@ -39,14 +44,38 @@ public class GuiSounds extends GuiScreen implements IListGui
         this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
         this.field_146292_n.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
         this.field_146292_n.add(new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
-        this.field_146292_n.add(new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
-        fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir);
+        this.field_146292_n.add(uploadButton = new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
+    }
+
+    @Override
+    public void updateScreen()
+    {
+        super.updateScreen();
+        if (selectedSound != null)
+        {
+            if (NetworkHandler.hasServerSound(selectedSound.getSoundName()))
+            {
+                uploadButton.field_146126_j = "Remove";
+                uploadButton.field_146124_l = NetworkHandler.uploadedSounds.get(selected).getCategory().equals(player.getDisplayName());
+            }
+            else
+            {
+                uploadButton.field_146126_j = "Upload";
+                uploadButton.field_146124_l = true;
+            }
+        }
     }
 
     @Override
     public void drawScreen(int p_571_1_, int p_571_2_, float p_571_3_)
     {
-        this.soundsList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
+        try
+        {
+            this.soundsList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
+        }
+        catch(Exception exception)
+        {
+        }
         super.drawScreen(p_571_1_, p_571_2_, p_571_3_);
 
         if (selectedSound != null)
@@ -98,8 +127,19 @@ public class GuiSounds extends GuiScreen implements IListGui
                 case 3:
                     if (selectedSound != null)
                     {
-                        Sound sound = SoundHandler.setupSound(selectedSound.getSoundLocation());
-                        NetworkHelper.clientSoundUpload(sound);
+                        if (!NetworkHandler.hasServerSound(selectedSound.getSoundName()))
+                        {
+                            Sound sound = SoundHandler.setupSound(selectedSound.getSoundLocation());
+                            NetworkHelper.clientSoundUpload(sound);
+                            selectedSound = null;
+                        }
+                        else
+                        {
+                            SoundsCool.proxy.getChannel().writeOutbound(new RemoveSoundPacket(selectedSound.getSoundName()));
+                            SoundHandler.removeSound(selectedSound);
+                            selectedSound = null;
+                            selected = -1;
+                        }
                     }
                     break;
             }

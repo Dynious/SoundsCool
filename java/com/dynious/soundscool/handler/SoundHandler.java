@@ -70,6 +70,18 @@ public class SoundHandler
         addSoundsFromDir(soundsFolder);
     }
 
+    public static void removeSound(Sound sound)
+    {
+        if (sound != null)
+        {
+            if (!sound.getSoundLocation().delete())
+            {
+                sound.getSoundLocation().deleteOnExit();
+            }
+            sounds.remove(sound);
+        }
+    }
+
     private static void addSoundsFromDir(File dir)
     {
         for (File file : dir.listFiles())
@@ -105,7 +117,16 @@ public class SoundHandler
     @SideOnly(Side.CLIENT)
     public static Sound setupSound(File file)
     {
-        File category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
+        File category = null;
+        if (Minecraft.getMinecraft().func_147104_D() != null)
+        {
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
+            System.out.println(Minecraft.getMinecraft().func_147104_D().serverMOTD);
+        }
+        else
+        {
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().thePlayer.getDisplayName());
+        }
         if (!category.exists())
         {
             category.mkdir();

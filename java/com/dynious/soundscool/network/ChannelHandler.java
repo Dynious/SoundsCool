@@ -25,7 +25,8 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         CLIENT_PLAY_SOUND,
         SERVER_PLAY_SOUND,
         SOUND_PLAYER_PLAY,
-        SOUND_PLAYER_SELECT
+        SOUND_PLAYER_SELECT,
+        REMOVE_SOUND
     }
 
     public ChannelHandler() {
@@ -40,6 +41,7 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         addDiscriminator(Packets.SERVER_PLAY_SOUND.ordinal(), ServerPlaySoundPacket.class);
         addDiscriminator(Packets.SOUND_PLAYER_PLAY.ordinal(), SoundPlayerPlayPacket.class);
         addDiscriminator(Packets.SOUND_PLAYER_SELECT.ordinal(), SoundPlayerSelectPacket.class);
+        addDiscriminator(Packets.REMOVE_SOUND.ordinal(), RemoveSoundPacket.class);
     }
 
     @Override
