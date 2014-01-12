@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "soundscool",
+  "name": "Sounds Cool",
+  "description": "A Minecraft mod all about sounds! ",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authors": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authors": ["Dynious"],
+  "credits": "Dynious and the Forge/MCP crew!",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

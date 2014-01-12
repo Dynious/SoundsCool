@@ -12,7 +12,7 @@ public class GuiLocalSoundsList extends GuiScrollingList
 
     public GuiLocalSoundsList(IListGui parent, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.getWidth(), 32, parent.getHeight() - 32 + 4, 10, 35);
+        super(parent.getMinecraftInstance(), listWidth, parent.getWidth(), 32, parent.getHeight() - 64, 10, 35);
         this.parent = parent;
     }
 

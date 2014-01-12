@@ -22,7 +22,7 @@ public class SoundPlayerSelectPacket implements IPacket
         this.x = tile.field_145851_c;
         this.y = tile.field_145848_d;
         this.z = tile.field_145849_e;
-        this.selected = tile.getSelected();
+        this.selected = tile.getSelectedIndex();
     }
 
     @Override

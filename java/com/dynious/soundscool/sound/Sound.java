@@ -18,7 +18,13 @@ public class Sound
             path = "";
         this.category = path;
         this.soundName = soundLocation.getName();
-        System.out.println(category + " & " + soundName);
+    }
+
+    public Sound(String soundName, String category)
+    {
+        this.soundLocation = null;
+        this.soundName = soundName;
+        this.category = category;
     }
 
     public String getCategory()

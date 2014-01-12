@@ -24,7 +24,6 @@ public class NetworkHelper
 {
     public static final int PARTITION_SIZE = 10000;
 
-    @SideOnly(Side.SERVER)
     public static void sendPacketToPlayer(IPacket packet, EntityPlayer player)
     {
         SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
@@ -36,10 +35,9 @@ public class NetworkHelper
     public static void clientSoundUpload(Sound sound)
     {
         uploadSound(sound);
-        NetworkHandler.uploadedSounds.add(sound.getSoundName());
+        NetworkHandler.uploadedSounds.add(new Sound(sound.getSoundName(), Minecraft.getMinecraft().thePlayer.getDisplayName()));
     }
 
-    @SideOnly(Side.SERVER)
     public static void serverSoundUpload(Sound sound, EntityPlayer player)
     {
         SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
@@ -55,7 +53,7 @@ public class NetworkHelper
             byte[] bytes = ArrayUtils.subarray(soundBytes, i, i + Math.min(PARTITION_SIZE, soundBytes.length - i));
             SoundsCool.proxy.getChannel().writeOutbound(new SoundChunkPacket(sound.getSoundName(), bytes));
         }
-        String category = FMLCommonHandler.instance().getEffectiveSide().isClient()? Minecraft.getMinecraft().thePlayer.getDisplayName(): MinecraftServer.getServer().getServerHostname();
+        String category = FMLCommonHandler.instance().getEffectiveSide().isClient()? Minecraft.getMinecraft().thePlayer.getDisplayName(): MinecraftServer.getServer().getMOTD();
         SoundsCool.proxy.getChannel().writeOutbound(new SoundUploadedPacket(sound.getSoundName(), category));
     }
 

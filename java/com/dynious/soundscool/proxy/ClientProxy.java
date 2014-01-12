@@ -24,6 +24,6 @@ public class ClientProxy extends CommonProxy
     @Override
     public EmbeddedChannel getChannel()
     {
-        return channel.get(Side.CLIENT);
+        return channels.get(Side.CLIENT);
     }
 }

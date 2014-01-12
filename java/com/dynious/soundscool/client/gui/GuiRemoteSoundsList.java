@@ -1,6 +1,7 @@
 package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.handler.NetworkHandler;
+import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.client.GuiScrollingList;
 import net.minecraft.client.renderer.Tessellator;
 
@@ -10,7 +11,7 @@ public class GuiRemoteSoundsList extends GuiScrollingList
 
     public GuiRemoteSoundsList(IListGui parent, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.getWidth(), 32, parent.getHeight() - 32 + 4, 10, 35);
+        super(parent.getMinecraftInstance(), listWidth, parent.getWidth(), 32, parent.getHeight() - 32, 10, 35);
         this.parent = parent;
     }
 
@@ -47,11 +48,11 @@ public class GuiRemoteSoundsList extends GuiScrollingList
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
-        String sound = NetworkHandler.uploadedSounds.get(listIndex);
+        Sound sound = NetworkHandler.uploadedSounds.get(listIndex);
         if (sound != null)
         {
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound, listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
-            //this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(NetworkHandler.hasServerSound(sound.getSoundName())? "Uploaded": "Not uploaded", listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound.getSoundName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound.getCategory(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
         }
     }
 }

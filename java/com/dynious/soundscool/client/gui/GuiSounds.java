@@ -2,6 +2,7 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
+import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 
@@ -34,10 +36,10 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         super.initGui();
         soundsList = new GuiLocalSoundsList(this, 150);
-        this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 75, this.field_146295_m - 38, I18n.getStringParams("gui.done")));
-        this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 75, 38, "Select File"));
-        this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 75, field_146295_m/2 - 20, "Play Sound"));
-        this.field_146292_n.add(new GuiButton(3, this.field_146294_l / 2 - 75, field_146295_m/2 + 20, "Upload"));
+        this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
+        this.field_146292_n.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
+        this.field_146292_n.add(new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
+        this.field_146292_n.add(new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
         fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir);
     }
 
@@ -46,6 +48,26 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         this.soundsList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         super.drawScreen(p_571_1_, p_571_2_, p_571_3_);
+
+        if (selectedSound != null)
+        {
+            this.getFontRenderer().drawString(selectedSound.getSoundName(), getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(selectedSound.getSoundName())/2), 30, 0xFFFFFF);
+
+            boolean hasSound = NetworkHandler.hasServerSound(selectedSound.getSoundName());
+            String uploaded = hasSound? "Uploaded": "Not uploaded";
+            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, hasSound? 0x00FF00: 0xFF0000);
+
+            if (selectedSound.getCategory() != null)
+            {
+                this.getFontRenderer().drawString(selectedSound.getCategory(), getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(selectedSound.getCategory())/2), 90, 0xFFFFFF);
+            }
+
+            if (selectedSound.getSoundLocation() != null)
+            {
+                String space = FileUtils.byteCountToDisplaySize(selectedSound.getSoundLocation().length());
+                this.getFontRenderer().drawString(space, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(space)/2), 120, 0xFFFFFF);
+            }
+        }
     }
 
     @Override
@@ -120,7 +142,7 @@ public class GuiSounds extends GuiScreen implements IListGui
     @Override
     public int getWidth()
     {
-        return field_146295_m;
+        return field_146294_l;
     }
 
     @Override
@@ -133,5 +155,11 @@ public class GuiSounds extends GuiScreen implements IListGui
     public void drawBackground()
     {
         func_146276_q_();
+    }
+
+    @Override
+    public boolean doesGuiPauseGame()
+    {
+        return false;
     }
 }

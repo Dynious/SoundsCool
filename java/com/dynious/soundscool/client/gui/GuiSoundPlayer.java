@@ -2,18 +2,21 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.NetworkHandler;
-import com.dynious.soundscool.network.packet.client.ClientPlaySoundPacket;
+import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.network.packet.client.SoundPlayerPlayPacket;
-import com.dynious.soundscool.network.packet.client.SoundPlayerSelectPacket;
+import com.dynious.soundscool.sound.Sound;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
+import org.apache.commons.io.FileUtils;
 
+@SideOnly(Side.CLIENT)
 public class GuiSoundPlayer extends GuiScreen implements IListGui
 {
     private GuiRemoteSoundsList soundsList;
@@ -30,7 +33,8 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     {
         super.initGui();
         soundsList = new GuiRemoteSoundsList(this, 150);
-        this.field_146292_n.add(new GuiButton(0, this.field_146294_l / 2 - 75, this.field_146295_m - 38, "Play"));
+        this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
+        this.field_146292_n.add(new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
     }
 
     @Override
@@ -38,6 +42,25 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     {
         this.soundsList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         super.drawScreen(p_571_1_, p_571_2_, p_571_3_);
+
+        Sound sound = tile.getSelectedSound();
+        if (sound != null)
+        {
+            this.getFontRenderer().drawString(sound.getSoundName(), getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(sound.getSoundName())/2), 30, 0xFFFFFF);
+
+            boolean hasSound = SoundHandler.getSound(sound.getSoundName()) != null;
+            String uploaded = hasSound? "Downloaded": "Not downloaded";
+            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, hasSound? 0x00FF00: 0xFF0000);
+
+            String category = NetworkHandler.uploadedSounds.get(tile.getSelectedIndex()).getCategory();
+            this.getFontRenderer().drawString(category, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(category)/2), 90, 0xFFFFFF);
+
+            if (sound.getSoundLocation() != null)
+            {
+                String space = FileUtils.byteCountToDisplaySize(sound.getSoundLocation().length());
+                this.getFontRenderer().drawString(space, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(space)/2), 120, 0xFFFFFF);
+            }
+        }
     }
 
     @Override
@@ -47,7 +70,14 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
             switch (button.field_146127_k)
             {
                 case 0:
-                    SoundsCool.proxy.getChannel().writeOutbound(new SoundPlayerPlayPacket(tile));
+                    this.field_146297_k.func_147108_a(null);
+                    this.field_146297_k.setIngameFocus();
+                    break;
+                case 1:
+                    if (tile.getSelectedSound() != null)
+                    {
+                        SoundsCool.proxy.getChannel().writeOutbound(new SoundPlayerPlayPacket(tile));
+                    }
                     break;
             }
     }
@@ -73,13 +103,13 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     @Override
     public boolean soundIndexSelected(int var1)
     {
-        return tile.getSelected() == var1;
+        return tile.getSelectedIndex() == var1;
     }
 
     @Override
     public int getWidth()
     {
-        return field_146295_m;
+        return field_146294_l;
     }
 
     @Override
@@ -92,5 +122,11 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     public void drawBackground()
     {
         func_146276_q_();
+    }
+
+    @Override
+    public boolean doesGuiPauseGame()
+    {
+        return false;
     }
 }

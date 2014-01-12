@@ -91,7 +91,7 @@ public class SoundHandler
     @SideOnly(Side.CLIENT)
     public static void playSound(String soundName, int x, int y, int z)
     {
-        Sound sound = SoundHandler.getSound(Minecraft.getMinecraft().func_147104_D().serverName, soundName);
+        Sound sound = SoundHandler.getSound(soundName);
         if (sound != null)
         {
             SoundPlayer.playSound(sound.getSoundLocation(), x, y, z);
@@ -105,7 +105,7 @@ public class SoundHandler
     @SideOnly(Side.CLIENT)
     public static Sound setupSound(File file)
     {
-        File category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverName);
+        File category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
         if (!category.exists())
         {
             category.mkdir();

@@ -26,10 +26,8 @@ public class GuiHandler implements IGuiHandler
         switch(ID)
         {
             case 0:
-                System.out.println("Opening GUI");
                 return new GuiSounds(player);
             case 1:
-                System.out.println("Opening GUI");
                 TileEntity tile = world.func_147438_o(x, y, z);
                 if (tile != null && tile instanceof TileSoundPlayer)
                 {

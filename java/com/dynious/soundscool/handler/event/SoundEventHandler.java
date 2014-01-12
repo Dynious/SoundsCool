@@ -12,7 +12,6 @@ public class SoundEventHandler
     @SubscribeEvent
     public void onSoundLoad(SoundSetupEvent event)
     {
-        System.out.println("setup codecs!");
         try
         {
             SoundSystemConfig.setCodec("wav", CodecWav.class);

@@ -1,12 +1,10 @@
 package com.dynious.soundscool.network.packet.client;
 
-import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.network.packet.server.SoundNotFoundPacket;
 import com.dynious.soundscool.sound.Sound;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

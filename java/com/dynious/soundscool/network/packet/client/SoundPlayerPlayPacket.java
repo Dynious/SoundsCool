@@ -1,16 +1,10 @@
 package com.dynious.soundscool.network.packet.client;
 
-import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.network.packet.server.ServerPlaySoundPacket;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldManager;
-import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
 
 public class SoundPlayerPlayPacket implements IPacket
@@ -43,7 +37,6 @@ public class SoundPlayerPlayPacket implements IPacket
             if (tile != null && tile instanceof TileSoundPlayer)
             {
                 ((TileSoundPlayer)tile).playCurrentSound();
-                System.out.println("PLAY!");
             }
         }
     }

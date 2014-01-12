@@ -17,18 +17,25 @@ public class UploadedSoundsPacket implements IPacket
     @Override
     public void readBytes(ByteBuf bytes)
     {
-        ArrayList<String> soundList = new ArrayList<String>();
+        ArrayList<Sound> soundList = new ArrayList<Sound>();
         int sounds = bytes.readInt();
         for (int y = 0; y < sounds; y++)
         {
-            int fileLength = bytes.readInt();
-            char[] fileCars = new char[fileLength];
-            for (int i = 0; i < fileLength; i++)
+            int soundNameLength = bytes.readInt();
+            char[] soundNameCars = new char[soundNameLength];
+            for (int i = 0; i < soundNameLength; i++)
             {
-                fileCars[i] = bytes.readChar();
+                soundNameCars[i] = bytes.readChar();
             }
-            soundList.add(String.valueOf(fileCars));
+            int soundCatLength = bytes.readInt();
+            char[] soundCatChars = new char[soundCatLength];
+            for (int i = 0; i < soundCatLength; i++)
+            {
+                soundCatChars[i] = bytes.readChar();
+            }
+            soundList.add(new Sound(String.valueOf(soundNameCars), String.valueOf(soundCatChars)));
         }
+
         NetworkHandler.uploadedSounds = soundList;
     }
 
@@ -40,6 +47,11 @@ public class UploadedSoundsPacket implements IPacket
         {
             bytes.writeInt(sound.getSoundName().length());
             for (char c : sound.getSoundName().toCharArray())
+            {
+                bytes.writeChar(c);
+            }
+            bytes.writeInt(sound.getCategory().length());
+            for (char c : sound.getCategory().toCharArray())
             {
                 bytes.writeChar(c);
             }

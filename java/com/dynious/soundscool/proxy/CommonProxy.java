@@ -14,7 +14,7 @@ import java.util.EnumMap;
 
 public class CommonProxy
 {
-    public EnumMap<Side, FMLEmbeddedChannel> channel;
+    public EnumMap<Side, FMLEmbeddedChannel> channels;
 
     public void initTileEntities()
     {
@@ -23,16 +23,15 @@ public class CommonProxy
 
     public void initNetworking()
     {
-        channel = NetworkRegistry.INSTANCE.newChannel(Reference.modid, new ChannelHandler());
+        channels = NetworkRegistry.INSTANCE.newChannel(Reference.modid, new ChannelHandler());
     }
 
     public void soundSetup()
     {
-
     }
 
     public EmbeddedChannel getChannel()
     {
-        return channel.get(Side.SERVER);
+        return channels.get(Side.SERVER);
     }
 }

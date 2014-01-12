@@ -2,6 +2,7 @@ package com.dynious.soundscool;
 
 import com.dynious.soundscool.block.ModBlocks;
 import com.dynious.soundscool.command.CommandSoundsCool;
+import com.dynious.soundscool.creativetab.CreativeTabSoundsCool;
 import com.dynious.soundscool.handler.GuiHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.lib.Reference;
@@ -14,6 +15,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraft.creativetab.CreativeTabs;
 
 @Mod(modid = Reference.modid, name = Reference.name, version = Reference.version)
 public class SoundsCool
@@ -23,6 +25,8 @@ public class SoundsCool
 
     @SidedProxy(clientSide = Reference.clientProxy, serverSide = Reference.commonProxy)
     public static CommonProxy proxy;
+
+    public static CreativeTabs tabSoundsCool = new CreativeTabSoundsCool(CreativeTabs.getNextID(), Reference.modid);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
