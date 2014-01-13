@@ -1,5 +1,6 @@
 package com.dynious.soundscool.network.packet;
 
+import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
@@ -40,6 +41,7 @@ public class SoundUploadedPacket implements IPacket
 
         NetworkHelper.createFileFromByteArr(NetworkHandler.soundUploaded(soundName), category, soundName);
         SoundHandler.findSounds();
+        DelayedPlayHandler.onSoundReceived(soundName);
     }
 
     @Override

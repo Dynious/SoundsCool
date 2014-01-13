@@ -31,6 +31,7 @@ public class RemoveSoundPacket implements IPacket
 
         Sound sound = SoundHandler.getSound(soundName);
         SoundHandler.removeSound(sound);
+
     }
 
     @Override

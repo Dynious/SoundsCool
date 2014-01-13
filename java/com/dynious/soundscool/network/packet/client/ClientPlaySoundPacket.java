@@ -41,7 +41,7 @@ public class ClientPlaySoundPacket implements IPacket
         y = bytes.readInt();
         z = bytes.readInt();
         SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-        SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(dimensionId, x, y, z, 64));
+        SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(dimensionId, x, y, z, 64));
         SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(soundName, x, y, z));
     }
 

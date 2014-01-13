@@ -11,7 +11,7 @@ public class SoundPlayerSelectPacket implements IPacket
 {
     int dimensionId;
     int x, y, z;
-    int selected;
+    String soundName;
     public SoundPlayerSelectPacket()
     {
     }
@@ -22,7 +22,7 @@ public class SoundPlayerSelectPacket implements IPacket
         this.x = tile.field_145851_c;
         this.y = tile.field_145848_d;
         this.z = tile.field_145849_e;
-        this.selected = tile.getSelectedIndex();
+        this.soundName = tile.getSelectedSound().getSoundName();
     }
 
     @Override
@@ -33,12 +33,21 @@ public class SoundPlayerSelectPacket implements IPacket
         y = bytes.readInt();
         z = bytes.readInt();
         World world = DimensionManager.getWorld(dimensionId);
+
+        int soundNameLength = bytes.readInt();
+        char[] soundNameCars = new char[soundNameLength];
+        for (int i = 0; i < soundNameLength; i++)
+        {
+            soundNameCars[i] = bytes.readChar();
+        }
+        soundName = String.valueOf(soundNameCars);
+
         if (world != null)
         {
             TileEntity tile = world.func_147438_o(x, y, z);
             if (tile != null && tile instanceof TileSoundPlayer)
             {
-                ((TileSoundPlayer)tile).selectSoundIndex(bytes.readInt());
+                ((TileSoundPlayer)tile).selectSound(soundName);
             }
         }
     }
@@ -50,6 +59,11 @@ public class SoundPlayerSelectPacket implements IPacket
         bytes.writeInt(x);
         bytes.writeInt(y);
         bytes.writeInt(z);
-        bytes.writeInt(selected);
+
+        bytes.writeInt(soundName.length());
+        for (char c : soundName.toCharArray())
+        {
+            bytes.writeChar(c);
+        }
     }
 }

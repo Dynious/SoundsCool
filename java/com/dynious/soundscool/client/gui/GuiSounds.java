@@ -181,7 +181,7 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         this.selected = selected;
 
-        if (selected >= 0 && selected <= SoundHandler.getSounds().size())
+        if (selected >= 0 && selected < SoundHandler.getSounds().size())
         {
             this.selectedSound = SoundHandler.getSounds().get(selected);
         }

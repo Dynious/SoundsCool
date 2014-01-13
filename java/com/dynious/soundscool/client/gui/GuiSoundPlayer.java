@@ -54,7 +54,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
             String uploaded = hasSound? "Downloaded": "Not downloaded";
             this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, hasSound? 0x00FF00: 0xFF0000);
 
-            String category = NetworkHandler.uploadedSounds.get(tile.getSelectedIndex()).getCategory();
+            String category = NetworkHandler.getServerSound(sound.getSoundName()).getCategory();
             this.getFontRenderer().drawString(category, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(category)/2), 90, 0xFFFFFF);
 
             if (sound.getSoundLocation() != null)
@@ -104,14 +104,22 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     @Override
     public void selectSoundIndex(int selected)
     {
-        tile.selectSoundIndex(selected);
-        onSelectedSoundChanged();
+        if (selected >= 0 && selected < NetworkHandler.uploadedSounds.size())
+        {
+            tile.selectSound(NetworkHandler.uploadedSounds.get(selected).getSoundName());
+            onSelectedSoundChanged();
+        }
     }
 
     @Override
     public boolean soundIndexSelected(int var1)
     {
-        return tile.getSelectedIndex() == var1;
+        Sound sound = tile.getSelectedSound();
+        if (sound != null)
+        {
+            return NetworkHandler.uploadedSounds.indexOf(NetworkHandler.getServerSound(sound.getSoundName())) == var1;
+        }
+        return false;
     }
 
     @Override
