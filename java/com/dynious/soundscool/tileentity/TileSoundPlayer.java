@@ -93,7 +93,7 @@ public class TileSoundPlayer extends TileEntity
         if (selectedSound != null)
         {
             SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-            SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(NetworkRegistry.INSTANCE.new TargetPoint(func_145831_w().provider.dimensionId, field_145851_c, field_145848_d, field_145849_e, 64));
+            SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(func_145831_w().provider.dimensionId, field_145851_c, field_145848_d, field_145849_e, 64));
             SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(selectedSound.getSoundName(), field_145851_c, field_145848_d, field_145849_e));
         }
     }
