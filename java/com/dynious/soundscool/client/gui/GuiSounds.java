@@ -27,6 +27,7 @@ public class GuiSounds extends GuiScreen implements IListGui
     private JFileChooser fileChooser;
     private EntityPlayer player;
     private GuiButton uploadButton;
+    private GuiButton playButton;
 
     public GuiSounds(EntityPlayer player)
     {
@@ -43,27 +44,16 @@ public class GuiSounds extends GuiScreen implements IListGui
         soundsList = new GuiLocalSoundsList(this, 150);
         this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
         this.field_146292_n.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
-        this.field_146292_n.add(new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
+        this.field_146292_n.add(playButton = new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
+        playButton.field_146124_l = false;
         this.field_146292_n.add(uploadButton = new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
+        uploadButton.field_146124_l = false;
     }
 
     @Override
     public void updateScreen()
     {
         super.updateScreen();
-        if (selectedSound != null)
-        {
-            if (NetworkHandler.hasServerSound(selectedSound.getSoundName()))
-            {
-                uploadButton.field_146126_j = "Remove";
-                uploadButton.field_146124_l = NetworkHandler.uploadedSounds.get(selected).getCategory().equals(player.getDisplayName());
-            }
-            else
-            {
-                uploadButton.field_146126_j = "Upload";
-                uploadButton.field_146124_l = true;
-            }
-        }
     }
 
     @Override
@@ -114,8 +104,9 @@ public class GuiSounds extends GuiScreen implements IListGui
                     int fcReturn = fileChooser.showOpenDialog(null);
                     if (fcReturn == JFileChooser.APPROVE_OPTION)
                     {
+                        selectSoundIndex(-1);
                         selectedSound = new Sound(fileChooser.getSelectedFile());
-                        selected = -1;
+                        onSelectedSoundChanged();
                     }
                     break;
                 case 2:
@@ -131,18 +122,45 @@ public class GuiSounds extends GuiScreen implements IListGui
                         {
                             Sound sound = SoundHandler.setupSound(selectedSound.getSoundLocation());
                             NetworkHelper.clientSoundUpload(sound);
-                            selectedSound = null;
+                            selectSoundIndex(-1);
                         }
                         else
                         {
                             SoundsCool.proxy.getChannel().writeOutbound(new RemoveSoundPacket(selectedSound.getSoundName()));
                             SoundHandler.removeSound(selectedSound);
-                            selectedSound = null;
-                            selected = -1;
+                            selectSoundIndex(-1);
                         }
                     }
                     break;
             }
+        }
+    }
+
+    public void onSelectedSoundChanged()
+    {
+        if (selectedSound != null)
+        {
+            if (NetworkHandler.hasServerSound(selectedSound.getSoundName()))
+            {
+                if (selected == -1)
+                {
+                    selectSoundIndex(NetworkHandler.uploadedSounds.indexOf(NetworkHandler.getServerSound(selectedSound.getSoundName())));
+                }
+                uploadButton.field_146126_j = "Remove";
+                uploadButton.field_146124_l = NetworkHandler.uploadedSounds.get(selected).getCategory().equals(player.getDisplayName());
+            }
+            else
+            {
+                uploadButton.field_146126_j = "Upload";
+                uploadButton.field_146124_l = true;
+            }
+            playButton.field_146124_l = true;
+        }
+        else
+        {
+            uploadButton.field_146126_j = "Upload";
+            uploadButton.field_146124_l = false;
+            playButton.field_146124_l = false;
         }
     }
 
@@ -171,6 +189,7 @@ public class GuiSounds extends GuiScreen implements IListGui
         {
             this.selectedSound = null;
         }
+        onSelectedSoundChanged();
     }
 
     @Override

@@ -21,6 +21,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
 {
     private GuiRemoteSoundsList soundsList;
     private TileSoundPlayer tile;
+    private GuiButton playButton;
 
     public GuiSoundPlayer(TileSoundPlayer tile)
     {
@@ -34,7 +35,8 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
         super.initGui();
         soundsList = new GuiRemoteSoundsList(this, 150);
         this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
-        this.field_146292_n.add(new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
+        this.field_146292_n.add(playButton = new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
+        onSelectedSoundChanged();
     }
 
     @Override
@@ -82,6 +84,11 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
             }
     }
 
+    public void onSelectedSoundChanged()
+    {
+        playButton.field_146124_l = tile.getSelectedSound() != null;
+    }
+
     @Override
     public Minecraft getMinecraftInstance()
     {
@@ -98,6 +105,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     public void selectSoundIndex(int selected)
     {
         tile.selectSoundIndex(selected);
+        onSelectedSoundChanged();
     }
 
     @Override

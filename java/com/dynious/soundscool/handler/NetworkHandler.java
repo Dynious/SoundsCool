@@ -16,22 +16,22 @@ public class NetworkHandler
     private static Map<String, byte[]> soundChunks = new HashMap<String, byte[]>();
 
     @SideOnly(Side.CLIENT)
-    public static boolean hasServerSound(Sound sound)
+    public static boolean hasServerSound(String soundName)
     {
-        return uploadedSounds.contains(sound);
+        return getServerSound(soundName) != null;
     }
 
     @SideOnly(Side.CLIENT)
-    public static boolean hasServerSound(String soundName)
+    public static Sound getServerSound(String soundName)
     {
         for (Sound sound : uploadedSounds)
         {
             if (sound.getSoundName().equals(soundName))
             {
-                return true;
+                return sound;
             }
         }
-        return false;
+        return null;
     }
 
     public static void addSoundChunk(String soundName, byte[] soundChunk)

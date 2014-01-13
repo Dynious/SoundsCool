@@ -79,6 +79,7 @@ public class SoundHandler
                 sound.getSoundLocation().deleteOnExit();
             }
             sounds.remove(sound);
+            NetworkHandler.uploadedSounds.remove(NetworkHandler.getServerSound(sound.getSoundName()));
         }
     }
 
@@ -121,7 +122,6 @@ public class SoundHandler
         if (Minecraft.getMinecraft().func_147104_D() != null)
         {
             category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
-            System.out.println(Minecraft.getMinecraft().func_147104_D().serverMOTD);
         }
         else
         {
