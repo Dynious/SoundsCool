@@ -56,7 +56,7 @@ public class TileSoundPlayer extends TileEntity
 
     public Sound getSelectedSound()
     {
-        if (selectedSound != null && SoundHandler.getSound(selectedSound.getSoundName()) == null)
+        if (selectedSound != null && NetworkHandler.getServerSound(selectedSound.getSoundName()) == null)
         {
             selectedSound = null;
         }
@@ -102,7 +102,16 @@ public class TileSoundPlayer extends TileEntity
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
-        selectedSound = SoundHandler.getSound(pkt.func_148857_g().getString("selected"));
+        String soundName = pkt.func_148857_g().getString("selected");
+        Sound sound = SoundHandler.getSound(soundName);
+        if (sound != null)
+        {
+            this.selectedSound = sound;
+        }
+        else
+        {
+            this.selectedSound = NetworkHandler.getServerSound(soundName);
+        }
     }
 
     //getDescriptionPacket()
