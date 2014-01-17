@@ -113,7 +113,7 @@ public class SoundHandler
         {
             SoundPlayer.playSound(sound.getSoundLocation(), x, y, z);
         }
-        else
+        else if (!NetworkHandler.isSoundUploading(soundName))
         {
             DelayedPlayHandler.addDelayedPlay(soundName, x, y, z);
             SoundsCool.proxy.getChannel().writeOutbound(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));

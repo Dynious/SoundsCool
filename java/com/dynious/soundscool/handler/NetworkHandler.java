@@ -50,4 +50,9 @@ public class NetworkHandler
     {
         return soundChunks.remove(soundName);
     }
+
+    public static boolean isSoundUploading(String soundName)
+    {
+        return soundChunks.containsKey(soundName);
+    }
 }
