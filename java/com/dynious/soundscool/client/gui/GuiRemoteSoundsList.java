@@ -1,6 +1,6 @@
 package com.dynious.soundscool.client.gui;
 
-import com.dynious.soundscool.handler.NetworkHandler;
+import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.client.GuiScrollingList;
 import net.minecraft.client.renderer.Tessellator;
@@ -18,7 +18,7 @@ public class GuiRemoteSoundsList extends GuiScrollingList
     @Override
     protected int getSize()
     {
-        return NetworkHandler.uploadedSounds.size();
+        return SoundHandler.getRemoteSounds().size();
     }
 
     @Override
@@ -48,11 +48,11 @@ public class GuiRemoteSoundsList extends GuiScrollingList
     @Override
     protected void drawSlot(int listIndex, int var2, int var3, int var4, Tessellator var5)
     {
-        Sound sound = NetworkHandler.uploadedSounds.get(listIndex);
+        Sound sound = SoundHandler.getRemoteSounds().get(listIndex);
         if (sound != null)
         {
             this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound.getSoundName(), listWidth - 10), this.left + 3 , var3 + 2, 0xFFFFFF);
-            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound.getCategory(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
+            this.parent.getFontRenderer().drawString(this.parent.getFontRenderer().trimStringToWidth(sound.getRemoteCategory(), listWidth - 10), this.left + 3 , var3 + 12, 0xCCCCCC);
         }
     }
 }

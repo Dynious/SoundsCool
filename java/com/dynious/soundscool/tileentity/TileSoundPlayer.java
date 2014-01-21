@@ -1,10 +1,11 @@
 package com.dynious.soundscool.tileentity;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.helper.SoundHelper;
 import com.dynious.soundscool.network.packet.client.SoundPlayerSelectPacket;
 import com.dynious.soundscool.network.packet.server.ServerPlaySoundPacket;
+import com.dynious.soundscool.network.packet.server.StopSoundPacket;
 import com.dynious.soundscool.sound.Sound;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -14,10 +15,19 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
+import java.util.UUID;
+
 public class TileSoundPlayer extends TileEntity
 {
     private boolean isPowered = false;
     private Sound selectedSound;
+    private String lastSoundIdentifier;
+    private long timeSoundFinishedPlaying;
 
     public void setPowered(boolean powered)
     {
@@ -34,49 +44,45 @@ public class TileSoundPlayer extends TileEntity
 
     public void selectSound(String soundName)
     {
+        this.selectedSound = SoundHandler.getSound(soundName);
+
         if (this.func_145831_w().isRemote)
         {
-            Sound sound = SoundHandler.getSound(soundName);
-            if (sound != null)
-            {
-                this.selectedSound = sound;
-            }
-            else
-            {
-                this.selectedSound = NetworkHandler.getServerSound(soundName);
-            }
-
             SoundsCool.proxy.getChannel().writeOutbound(new SoundPlayerSelectPacket(this));
-        }
-        else
-        {
-            this.selectedSound = SoundHandler.getSound(soundName);
         }
     }
 
     public Sound getSelectedSound()
     {
-        if (selectedSound != null && NetworkHandler.getServerSound(selectedSound.getSoundName()) == null)
-        {
-            selectedSound = null;
-        }
         return selectedSound;
     }
 
     public void playCurrentSound()
     {
-        if (selectedSound != null)
+        if (selectedSound != null && timeSoundFinishedPlaying < System.currentTimeMillis())
         {
             if (SoundHandler.getSound(selectedSound.getSoundName()) != null)
             {
+                lastSoundIdentifier = UUID.randomUUID().toString();
                 SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
                 SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(func_145831_w().provider.dimensionId, field_145851_c, field_145848_d, field_145849_e, 64));
-                SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(selectedSound.getSoundName(), field_145851_c, field_145848_d, field_145849_e));
+                SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(selectedSound.getSoundName(), lastSoundIdentifier, field_145851_c, field_145848_d, field_145849_e));
+                timeSoundFinishedPlaying = (long)(SoundHelper.getSoundLength(selectedSound.getSoundLocation())*1000) + System.currentTimeMillis();
             }
             else
             {
                 selectedSound = null;
             }
+        }
+    }
+
+    public void stopCurrentSound()
+    {
+        if (System.currentTimeMillis() < timeSoundFinishedPlaying)
+        {
+            SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+            SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(func_145831_w().provider.dimensionId, field_145851_c, field_145848_d, field_145849_e, 64));
+            SoundsCool.proxy.getChannel().writeOutbound(new StopSoundPacket(lastSoundIdentifier));
         }
     }
 
@@ -103,15 +109,7 @@ public class TileSoundPlayer extends TileEntity
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
         String soundName = pkt.func_148857_g().getString("selected");
-        Sound sound = SoundHandler.getSound(soundName);
-        if (sound != null)
-        {
-            this.selectedSound = sound;
-        }
-        else
-        {
-            this.selectedSound = NetworkHandler.getServerSound(soundName);
-        }
+        this.selectedSound = SoundHandler.getSound(soundName);
     }
 
     //getDescriptionPacket()

@@ -1,7 +1,6 @@
 package com.dynious.soundscool.helper;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.network.packet.SoundChunkPacket;
@@ -31,11 +30,17 @@ public class NetworkHelper
         SoundsCool.proxy.getChannel().writeOutbound(packet);
     }
 
+    public static void sendPacketToAll(IPacket packet)
+    {
+        SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+        SoundsCool.proxy.getChannel().writeOutbound(packet);
+    }
+
     @SideOnly(Side.CLIENT)
     public static void clientSoundUpload(Sound sound)
     {
+        sound.setState(Sound.SoundState.UPLOADING);
         uploadSound(sound);
-        NetworkHandler.uploadedSounds.add(new Sound(sound.getSoundName(), Minecraft.getMinecraft().thePlayer.getDisplayName()));
     }
 
     public static void serverSoundUpload(Sound sound, EntityPlayer player)
@@ -72,7 +77,7 @@ public class NetworkHelper
         return null;
     }
 
-    public static void createFileFromByteArr(byte[] byteFile, String category, String fileName)
+    public static File createFileFromByteArr(byte[] byteFile, String category, String fileName)
     {
         if (byteFile != null && byteFile.length > 0 && !category.isEmpty() && !fileName.isEmpty())
         {
@@ -84,6 +89,8 @@ public class NetworkHelper
             {
                 e.printStackTrace();
             }
+            return file;
         }
+        return null;
     }
 }

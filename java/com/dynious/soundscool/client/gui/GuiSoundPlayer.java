@@ -1,7 +1,6 @@
 package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
-import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.network.packet.client.SoundPlayerPlayPacket;
@@ -50,11 +49,10 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
         {
             this.getFontRenderer().drawString(sound.getSoundName(), getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(sound.getSoundName())/2), 30, 0xFFFFFF);
 
-            boolean hasSound = SoundHandler.getSound(sound.getSoundName()) != null;
-            String uploaded = hasSound? "Downloaded": "Not downloaded";
-            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, hasSound? 0x00FF00: 0xFF0000);
+            String uploaded = sound.hasLocal()? "Downloaded": "Not downloaded";
+            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, sound.hasLocal()? 0x00FF00: 0xFF0000);
 
-            String category = NetworkHandler.getServerSound(sound.getSoundName()).getCategory();
+            String category = sound.getRemoteCategory();
             this.getFontRenderer().drawString(category, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(category)/2), 90, 0xFFFFFF);
 
             if (sound.getSoundLocation() != null)
@@ -104,9 +102,9 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     @Override
     public void selectSoundIndex(int selected)
     {
-        if (selected >= 0 && selected < NetworkHandler.uploadedSounds.size())
+        if (selected >= 0 && selected < SoundHandler.getRemoteSounds().size())
         {
-            tile.selectSound(NetworkHandler.uploadedSounds.get(selected).getSoundName());
+            tile.selectSound(SoundHandler.getRemoteSounds().get(selected).getSoundName());
             onSelectedSoundChanged();
         }
     }
@@ -115,11 +113,7 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     public boolean soundIndexSelected(int var1)
     {
         Sound sound = tile.getSelectedSound();
-        if (sound != null)
-        {
-            return NetworkHandler.uploadedSounds.indexOf(NetworkHandler.getServerSound(sound.getSoundName())) == var1;
-        }
-        return false;
+        return sound != null && SoundHandler.getRemoteSounds().indexOf(sound) == var1;
     }
 
     @Override

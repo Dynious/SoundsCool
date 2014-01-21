@@ -4,10 +4,7 @@ import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.network.packet.SoundChunkPacket;
 import com.dynious.soundscool.network.packet.SoundUploadedPacket;
 import com.dynious.soundscool.network.packet.client.*;
-import com.dynious.soundscool.network.packet.server.OpenGUIPacket;
-import com.dynious.soundscool.network.packet.server.ServerPlaySoundPacket;
-import com.dynious.soundscool.network.packet.server.SoundNotFoundPacket;
-import com.dynious.soundscool.network.packet.server.UploadedSoundsPacket;
+import com.dynious.soundscool.network.packet.server.*;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,7 +23,10 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         SERVER_PLAY_SOUND,
         SOUND_PLAYER_PLAY,
         SOUND_PLAYER_SELECT,
-        REMOVE_SOUND
+        REMOVE_SOUND,
+        SOUND_RECEIVED,
+        SOUND_REMOVED,
+        STOP_SOUND
     }
 
     public ChannelHandler() {
@@ -42,6 +42,9 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         addDiscriminator(Packets.SOUND_PLAYER_PLAY.ordinal(), SoundPlayerPlayPacket.class);
         addDiscriminator(Packets.SOUND_PLAYER_SELECT.ordinal(), SoundPlayerSelectPacket.class);
         addDiscriminator(Packets.REMOVE_SOUND.ordinal(), RemoveSoundPacket.class);
+        addDiscriminator(Packets.SOUND_RECEIVED.ordinal(), SoundReceivedPacket.class);
+        addDiscriminator(Packets.SOUND_REMOVED.ordinal(), SoundRemovedPacket.class);
+        addDiscriminator(Packets.STOP_SOUND.ordinal(), StopSoundPacket.class);
     }
 
     @Override

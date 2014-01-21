@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import paulscode.sound.SoundSystem;
 
+import javax.sound.sampled.AudioInputStream;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -38,7 +39,7 @@ public class SoundPlayer
         }
     }
 
-    public static void playSound(File sound, float x, float y, float z)
+    public static void playSound(File sound, String identifier, float x, float y, float z)
     {
         if (soundSystem == null)
         {
@@ -46,11 +47,17 @@ public class SoundPlayer
         }
         try
         {
-            soundSystem.quickPlay(false, sound.toURI().toURL(), sound.getName(), false, x, y, z, 0, 16);
+            soundSystem.newSource(false, identifier, sound.toURI().toURL(), sound.getName(), false, x, y, z, 0, 16);
+            soundSystem.play(identifier);
         }
         catch (MalformedURLException e)
         {
             e.printStackTrace();
         }
+    }
+
+    public static void stopSound(String identifier)
+    {
+        soundSystem.stop(identifier);
     }
 }

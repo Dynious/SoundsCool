@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -76,6 +75,18 @@ public class BlockSoundPlayer extends BlockContainer
         {
             ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
         }
+    }
+
+    //breakBlock()
+    @Override
+    public void func_149749_a(World world, int x, int y, int z, Block block, int meta)
+    {
+        TileEntity tile =  world.func_147438_o(x, y, z);
+        if (tile != null && tile instanceof TileSoundPlayer)
+        {
+            ((TileSoundPlayer)tile).stopCurrentSound();
+        }
+        super.func_149749_a(world, x, y, z, block, meta);
     }
 
     private IIcon blockTop;

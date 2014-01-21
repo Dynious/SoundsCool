@@ -33,6 +33,8 @@ public class SoundsCool
     {
         proxy.soundSetup();
 
+        proxy.UISetup();
+
         SoundHandler.findSounds();
 
         ModBlocks.init();

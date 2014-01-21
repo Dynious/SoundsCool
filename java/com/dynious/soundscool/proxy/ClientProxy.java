@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.Side;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.swing.*;
+
 public class ClientProxy extends CommonProxy
 {
     @Override
@@ -19,6 +21,18 @@ public class ClientProxy extends CommonProxy
         super.soundSetup();
 
         MinecraftForge.EVENT_BUS.register(new SoundEventHandler());
+    }
+
+    @Override
+    public void UISetup()
+    {
+        try
+        {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override

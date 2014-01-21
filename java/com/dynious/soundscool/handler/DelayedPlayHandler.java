@@ -1,25 +1,25 @@
 package com.dynious.soundscool.handler;
 
-import com.dynious.soundscool.lib.Coords;
+import com.dynious.soundscool.sound.SoundPlayInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DelayedPlayHandler
 {
-    private static Map<String, Coords> map = new HashMap<String, Coords>();
+    private static Map<String, SoundPlayInfo> map = new HashMap<String, SoundPlayInfo>();
 
-    public static void addDelayedPlay(String soundName, int x, int y, int z)
+    public static void addDelayedPlay(String soundName, String identifier, int x, int y, int z)
     {
-        map.put(soundName, new Coords(x, y, z));
+        map.put(soundName, new SoundPlayInfo(identifier, x, y, z));
     }
 
     public static void onSoundReceived(String soundName)
     {
-        Coords coords = map.get(soundName);
-        if (coords != null)
+        SoundPlayInfo info = map.get(soundName);
+        if (info != null)
         {
-            SoundHandler.playSound(soundName, coords.x, coords.y, coords.z);
+            SoundHandler.playSound(soundName,info.identifier, info.x, info.y, info.z);
             map.remove(soundName);
         }
     }

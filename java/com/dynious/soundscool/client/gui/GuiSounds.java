@@ -2,7 +2,6 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
-import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
@@ -18,6 +17,8 @@ import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.util.UUID;
 
 public class GuiSounds extends GuiScreen implements IListGui
 {
@@ -32,7 +33,16 @@ public class GuiSounds extends GuiScreen implements IListGui
     public GuiSounds(EntityPlayer player)
     {
         this.player = player;
-        fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir);
+        fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir) {
+            @Override
+            protected JDialog createDialog(Component parent)
+                    throws HeadlessException {
+                JDialog dialog = super.createDialog(parent);
+                dialog.setLocationByPlatform(true);
+                dialog.setAlwaysOnTop(true);
+                return dialog;
+            }
+        };
         fileChooser.setFileFilter(new FileNameExtensionFilter("Sound Files (.ogg, .wav, .mp3)", "ogg", "wav", "mp3"));
         SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
     }
@@ -63,7 +73,7 @@ public class GuiSounds extends GuiScreen implements IListGui
         {
             this.soundsList.drawScreen(p_571_1_, p_571_2_, p_571_3_);
         }
-        catch(Exception exception)
+        catch(Exception ignored)
         {
         }
         super.drawScreen(p_571_1_, p_571_2_, p_571_3_);
@@ -72,9 +82,8 @@ public class GuiSounds extends GuiScreen implements IListGui
         {
             this.getFontRenderer().drawString(selectedSound.getSoundName(), getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(selectedSound.getSoundName())/2), 30, 0xFFFFFF);
 
-            boolean hasSound = NetworkHandler.hasServerSound(selectedSound.getSoundName());
-            String uploaded = hasSound? "Uploaded": "Not uploaded";
-            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, hasSound? 0x00FF00: 0xFF0000);
+            String uploaded = selectedSound.hasRemote()? "Uploaded": "Not uploaded";
+            this.getFontRenderer().drawString(uploaded, getWidth()/2 + + 100 - (this.getFontRenderer().getStringWidth(uploaded)/2), 60, selectedSound.hasRemote()? 0x00FF00: 0xFF0000);
 
             if (selectedSound.getCategory() != null)
             {
@@ -101,7 +110,15 @@ public class GuiSounds extends GuiScreen implements IListGui
                     this.field_146297_k.setIngameFocus();
                     break;
                 case 1:
+                    if (Minecraft.getMinecraft().isFullScreen())
+                    {
+                        Minecraft.getMinecraft().toggleFullscreen();
+                    }
                     int fcReturn = fileChooser.showOpenDialog(null);
+                    if (Minecraft.getMinecraft().gameSettings.fullScreen != Minecraft.getMinecraft().isFullScreen())
+                    {
+                        Minecraft.getMinecraft().toggleFullscreen();
+                    }
                     if (fcReturn == JFileChooser.APPROVE_OPTION)
                     {
                         selectSoundIndex(-1);
@@ -112,13 +129,13 @@ public class GuiSounds extends GuiScreen implements IListGui
                 case 2:
                     if (selectedSound != null)
                     {
-                        SoundPlayer.playSound(selectedSound.getSoundLocation(), (float)player.posX, (float)player.posY, (float)player.posZ);
+                        SoundPlayer.playSound(selectedSound.getSoundLocation(), UUID.randomUUID().toString(), (float)player.posX, (float)player.posY, (float)player.posZ);
                     }
                     break;
                 case 3:
                     if (selectedSound != null)
                     {
-                        if (!NetworkHandler.hasServerSound(selectedSound.getSoundName()))
+                        if (selectedSound.getState() == Sound.SoundState.LOCAL_ONLY)
                         {
                             Sound sound = SoundHandler.setupSound(selectedSound.getSoundLocation());
                             NetworkHelper.clientSoundUpload(sound);
@@ -140,14 +157,10 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         if (selectedSound != null)
         {
-            if (NetworkHandler.hasServerSound(selectedSound.getSoundName()))
+            if (selectedSound.hasRemote())
             {
-                if (selected == -1)
-                {
-                    selectSoundIndex(NetworkHandler.uploadedSounds.indexOf(NetworkHandler.getServerSound(selectedSound.getSoundName())));
-                }
                 uploadButton.field_146126_j = "Remove";
-                uploadButton.field_146124_l = NetworkHandler.uploadedSounds.get(selected).getCategory().equals(player.getDisplayName());
+                uploadButton.field_146124_l = selectedSound.getRemoteCategory().equals(player.getDisplayName());
             }
             else
             {
@@ -181,9 +194,9 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         this.selected = selected;
 
-        if (selected >= 0 && selected < SoundHandler.getSounds().size())
+        if (selected >= 0 && selected < SoundHandler.getLocalSounds().size())
         {
-            this.selectedSound = SoundHandler.getSounds().get(selected);
+            this.selectedSound = SoundHandler.getLocalSounds().get(selected);
         }
         else
         {

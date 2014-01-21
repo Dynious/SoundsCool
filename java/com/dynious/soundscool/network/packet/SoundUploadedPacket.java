@@ -4,7 +4,14 @@ import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.network.packet.server.SoundReceivedPacket;
+import cpw.mods.fml.common.FMLCommonHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+
+import java.io.File;
 
 public class SoundUploadedPacket implements IPacket
 {
@@ -30,6 +37,10 @@ public class SoundUploadedPacket implements IPacket
             catCars[i] = bytes.readChar();
         }
         category = String.valueOf(catCars);
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient() && (category.equalsIgnoreCase("null") || category.isEmpty()))
+        {
+            category = Minecraft.getMinecraft().func_147104_D().serverName;
+        }
 
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
@@ -39,9 +50,20 @@ public class SoundUploadedPacket implements IPacket
         }
         soundName = String.valueOf(fileCars);
 
-        NetworkHelper.createFileFromByteArr(NetworkHandler.soundUploaded(soundName), category, soundName);
-        SoundHandler.findSounds();
-        DelayedPlayHandler.onSoundReceived(soundName);
+        File soundFile = NetworkHelper.createFileFromByteArr(NetworkHandler.soundUploaded(soundName), category, soundName);
+        SoundHandler.addLocalSound(soundName, soundFile);
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+        {
+            DelayedPlayHandler.onSoundReceived(soundName);
+        }
+        else
+        {
+            EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(category);
+            if (player != null)
+            {
+                NetworkHelper.sendPacketToPlayer(new SoundReceivedPacket(SoundHandler.getSound(soundName)), player);
+            }
+        }
     }
 
     @Override

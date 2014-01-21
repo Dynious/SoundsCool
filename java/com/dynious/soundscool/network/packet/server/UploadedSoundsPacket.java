@@ -1,12 +1,9 @@
 package com.dynious.soundscool.network.packet.server;
 
-import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.network.packet.IPacket;
 import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
-
-import java.util.ArrayList;
 
 public class UploadedSoundsPacket implements IPacket
 {
@@ -17,7 +14,6 @@ public class UploadedSoundsPacket implements IPacket
     @Override
     public void readBytes(ByteBuf bytes)
     {
-        ArrayList<Sound> soundList = new ArrayList<Sound>();
         int sounds = bytes.readInt();
         for (int y = 0; y < sounds; y++)
         {
@@ -33,10 +29,8 @@ public class UploadedSoundsPacket implements IPacket
             {
                 soundCatChars[i] = bytes.readChar();
             }
-            soundList.add(new Sound(String.valueOf(soundNameCars), String.valueOf(soundCatChars)));
+            SoundHandler.addRemoteSound(String.valueOf(soundNameCars), String.valueOf(soundCatChars));
         }
-
-        NetworkHandler.uploadedSounds = soundList;
     }
 
     @Override

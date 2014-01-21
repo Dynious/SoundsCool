@@ -2,7 +2,9 @@ package com.dynious.soundscool.handler;
 
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
+import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
+import com.dynious.soundscool.network.packet.server.SoundRemovedPacket;
 import com.dynious.soundscool.sound.Sound;
 import com.google.common.io.Files;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -36,16 +38,26 @@ public class SoundHandler
         return sounds;
     }
 
-    public static Sound getSound(String category, String fileName)
+    public static ArrayList<Sound> getLocalSounds()
     {
+        ArrayList<Sound> localSounds = new ArrayList<Sound>();
         for (Sound sound : getSounds())
         {
-            if(sound.getCategory().equals(category) && sound.getSoundName().equals(fileName))
-            {
-                return sound;
-            }
+            if (sound.hasLocal())
+                localSounds.add(sound);
         }
-        return null;
+        return localSounds;
+    }
+
+    public static ArrayList<Sound> getRemoteSounds()
+    {
+        ArrayList<Sound> remoteSounds = new ArrayList<Sound>();
+        for (Sound sound : getSounds())
+        {
+            if (sound.hasRemote())
+                remoteSounds.add(sound);
+        }
+        return remoteSounds;
     }
 
     public static Sound getSound(String fileName)
@@ -80,9 +92,9 @@ public class SoundHandler
                 sound.getSoundLocation().deleteOnExit();
             }
             sounds.remove(sound);
-            if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+            if (FMLCommonHandler.instance().getEffectiveSide().isServer())
             {
-                NetworkHandler.uploadedSounds.remove(NetworkHandler.getServerSound(sound.getSoundName()));
+                NetworkHelper.sendPacketToAll(new SoundRemovedPacket(sound.getSoundName()));
             }
         }
     }
@@ -105,27 +117,72 @@ public class SoundHandler
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void playSound(String soundName, int x, int y, int z)
+    public static void addRemoteSound(String soundName, String remoteCategory)
     {
-        Sound sound = SoundHandler.getSound(soundName);
+        Sound sound = getSound(soundName);
         if (sound != null)
         {
-            SoundPlayer.playSound(sound.getSoundLocation(), x, y, z);
+            if (sound.hasLocal())
+            {
+                sound.onSoundUploaded(remoteCategory);
+            }
         }
-        else if (!NetworkHandler.isSoundUploading(soundName))
+        else
         {
-            DelayedPlayHandler.addDelayedPlay(soundName, x, y, z);
+            sounds.add(new Sound(soundName, remoteCategory));
+        }
+    }
+
+    public static void addLocalSound(String soundName, File soundFile)
+    {
+        Sound sound = getSound(soundName);
+        if (sound != null)
+        {
+            if (sound.getState() != Sound.SoundState.SYNCED)
+            {
+                sound.onSoundDownloaded(soundFile);
+            }
+        }
+        else
+        {
+            sounds.add(new Sound(soundFile));
+        }
+    }
+
+    public static void remoteRemovedSound(Sound sound)
+    {
+        if (!sound.hasLocal())
+        {
+            sounds.remove(sound);
+        }
+        else
+        {
+            sound.setState(Sound.SoundState.LOCAL_ONLY);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void playSound(String soundName, String identifier, int x, int y, int z)
+    {
+        Sound sound = SoundHandler.getSound(soundName);
+        if (sound.hasLocal())
+        {
+            SoundPlayer.playSound(sound.getSoundLocation(), identifier, x, y, z);
+        }
+        else if (sound.getState() != Sound.SoundState.DOWNLOADING)
+        {
+            sound.setState(Sound.SoundState.DOWNLOADING);
+            DelayedPlayHandler.addDelayedPlay(soundName, identifier, x, y, z);
             SoundsCool.proxy.getChannel().writeOutbound(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));
         }
     }
     @SideOnly(Side.CLIENT)
     public static Sound setupSound(File file)
     {
-        File category = null;
+        File category;
         if (Minecraft.getMinecraft().func_147104_D() != null)
         {
-            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverName);
         }
         else
         {

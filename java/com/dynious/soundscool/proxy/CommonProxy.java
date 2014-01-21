@@ -30,6 +30,10 @@ public class CommonProxy
     {
     }
 
+    public void UISetup()
+    {
+    }
+
     public EmbeddedChannel getChannel()
     {
         return channels.get(Side.SERVER);
