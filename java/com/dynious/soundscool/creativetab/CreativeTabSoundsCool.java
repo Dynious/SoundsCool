@@ -21,7 +21,7 @@ public class CreativeTabSoundsCool extends CreativeTabs
     }
 
     @SideOnly(Side.CLIENT)
-    public ItemStack func_151244_d()
+    public ItemStack getIconItemStack()
     {
         return new ItemStack(ModBlocks.soundPlayer);
     }

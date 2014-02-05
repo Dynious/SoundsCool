@@ -1,5 +1,7 @@
 package com.dynious.soundscool.client.audio;
 
+import com.dynious.soundscool.handler.SoundHandler;
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -18,25 +20,8 @@ public class SoundPlayer
 
     private static void init()
     {
-        try
-        {
-            Field soundManagerField = Minecraft.getMinecraft().func_147118_V().getClass().getDeclaredField("field_147694_f");
-            soundManagerField.setAccessible(true);
-            SoundManager soundManager = (SoundManager)soundManagerField.get(Minecraft.getMinecraft().func_147118_V());
-
-            Field soundSystemField = soundManager.getClass().getDeclaredField("field_148620_e");
-            soundSystemField.setAccessible(true);
-            soundSystem = (SoundSystem)soundSystemField.get(soundManager);
-
-        }
-        catch (NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
+        SoundManager soundManager = ObfuscationReflectionHelper.getPrivateValue(net.minecraft.client.audio.SoundHandler.class, Minecraft.getMinecraft().getSoundHandler(), "sndManager", "field_147694_f", "V");
+        soundSystem = ObfuscationReflectionHelper.getPrivateValue(SoundManager.class, soundManager, "sndSystem", "field_148620_e", "e");
     }
 
     public static void playSound(File sound, String identifier, float x, float y, float z)

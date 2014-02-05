@@ -23,7 +23,7 @@ public class CheckPresencePacket implements IPacket
     public CheckPresencePacket(String soundName, EntityPlayer player)
     {
         this.fileName = soundName;
-        this.entityID = player.func_145782_y();
+        this.entityID = player.getEntityId();
         this.worldID = player.getEntityWorld().provider.dimensionId;
     }
 

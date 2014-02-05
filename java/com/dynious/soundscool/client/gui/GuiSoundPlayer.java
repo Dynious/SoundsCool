@@ -33,8 +33,8 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     {
         super.initGui();
         soundsList = new GuiRemoteSoundsList(this, 150);
-        this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
-        this.field_146292_n.add(playButton = new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
+        this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
+        this.buttonList.add(playButton = new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
         onSelectedSoundChanged();
     }
 
@@ -64,14 +64,14 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     }
 
     @Override
-    protected void func_146284_a(GuiButton button)
+    protected void actionPerformed(GuiButton button)
     {
-        if (button.field_146124_l)
-            switch (button.field_146127_k)
+        if (button.enabled)
+            switch (button.id)
             {
                 case 0:
-                    this.field_146297_k.func_147108_a(null);
-                    this.field_146297_k.setIngameFocus();
+                    this.mc.displayGuiScreen(null);
+                    this.mc.setIngameFocus();
                     break;
                 case 1:
                     if (tile.getSelectedSound() != null)
@@ -84,19 +84,19 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
 
     public void onSelectedSoundChanged()
     {
-        playButton.field_146124_l = tile.getSelectedSound() != null;
+        playButton.enabled = tile.getSelectedSound() != null;
     }
 
     @Override
     public Minecraft getMinecraftInstance()
     {
-        return field_146297_k;
+        return mc;
     }
 
     @Override
     public FontRenderer getFontRenderer()
     {
-        return field_146289_q;
+        return fontRendererObj;
     }
 
     @Override
@@ -119,19 +119,19 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
     @Override
     public int getWidth()
     {
-        return field_146294_l;
+        return width;
     }
 
     @Override
     public int getHeight()
     {
-        return field_146295_m;
+        return height;
     }
 
     @Override
     public void drawBackground()
     {
-        func_146276_q_();
+        drawDefaultBackground();
     }
 
     @Override

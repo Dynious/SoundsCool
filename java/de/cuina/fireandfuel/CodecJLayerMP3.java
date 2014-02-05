@@ -329,7 +329,12 @@ public class CodecJLayerMP3 implements ICodec
 							+ "AudioInputStream (location #2).");
 					printStackTrace(e);
 					return null;
-				}
+				} catch (ArrayIndexOutOfBoundsException e)
+                {
+                    errorMessage("Tried to play a badly encoded MP3 file. " +
+                            "Please try another file.");
+                    return null;
+                }
 
 				// Reverse byte order if necessary:
 				// if( reverseBytes )

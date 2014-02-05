@@ -19,7 +19,7 @@ public class GetUploadedSoundsPacket implements IPacket
 
     public GetUploadedSoundsPacket(EntityPlayer player)
     {
-        this.entityID = player.func_145782_y();
+        this.entityID = player.getEntityId();
         this.worldID = player.getEntityWorld().provider.dimensionId;
     }
 

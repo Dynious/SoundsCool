@@ -23,8 +23,8 @@ public class GuiAdminPanel extends GuiScreen
     public void initGui()
     {
         super.initGui();
-        this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
-        maxSounds = new GuiTextField(field_146289_q, getWidth()/2, getHeight()/2, 20, 15);
+        this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
+        maxSounds = new GuiTextField(fontRendererObj, getWidth()/2, getHeight()/2, 20, 15);
     }
 
     @Override
@@ -40,15 +40,15 @@ public class GuiAdminPanel extends GuiScreen
     }
 
     @Override
-    protected void func_146284_a(GuiButton button)
+    protected void actionPerformed(GuiButton button)
     {
-        if (button.field_146124_l)
+        if (button.enabled)
         {
-            switch (button.field_146127_k)
+            switch (button.id)
             {
                 case 0:
-                    this.field_146297_k.func_147108_a(null);
-                    this.field_146297_k.setIngameFocus();
+                    this.mc.displayGuiScreen(null);
+                    this.mc.setIngameFocus();
                     break;
 
             }
@@ -57,12 +57,12 @@ public class GuiAdminPanel extends GuiScreen
 
     public int getWidth()
     {
-        return field_146294_l;
+        return width;
     }
 
     public int getHeight()
     {
-        return field_146295_m;
+        return height;
     }
 
     @Override

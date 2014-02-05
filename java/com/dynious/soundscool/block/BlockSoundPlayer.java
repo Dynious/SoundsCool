@@ -21,19 +21,21 @@ public class BlockSoundPlayer extends BlockContainer
 {
     public BlockSoundPlayer()
     {
-        super(Material.field_151576_e);
-        this.func_149647_a(SoundsCool.tabSoundsCool);
-        this.func_149663_c(Names.soundPlayer);
+        super(Material.rock);
+        this.setCreativeTab(SoundsCool.tabSoundsCool);
+        this.setBlockName(Names.soundPlayer);
     }
 
     @Override
-    public TileEntity func_149915_a(World var1, int var2)
+    public TileEntity createNewTileEntity(World var1, int var2)
     {
         return new TileSoundPlayer();
     }
 
+
+
     @Override
-    public boolean func_149727_a(World world, int x, int y, int z,
+    public boolean onBlockActivated(World world, int x, int y, int z,
                                  EntityPlayer player, int par6, float par7, float par8, float par9)
     {
         if (player.isSneaking())
@@ -42,7 +44,7 @@ public class BlockSoundPlayer extends BlockContainer
         }
         else
         {
-            TileEntity tile = world.func_147438_o(x, y, z);
+            TileEntity tile = world.getTileEntity(x, y, z);
             if (tile != null && tile instanceof TileSoundPlayer)
             {
                 player.openGui(SoundsCool.instance, 1, world, x, y, z);
@@ -57,54 +59,51 @@ public class BlockSoundPlayer extends BlockContainer
         return true;
     }
 
-    //onBlockAdded
-    public void func_149726_b(World world, int x, int y, int z)
-    {
-        TileEntity tile = world.func_147438_o(x, y, z);
-        if (tile != null && tile instanceof TileSoundPlayer)
-        {
-            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
-        }
-    }
-
-    //onBlockNeighbourChanged
-    public void func_149695_a(World world, int x, int y, int z, Block block)
-    {
-        TileEntity tile = world.func_147438_o(x, y, z);
-        if (tile != null && tile instanceof TileSoundPlayer)
-        {
-            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
-        }
-    }
-
-    //breakBlock()
     @Override
-    public void func_149749_a(World world, int x, int y, int z, Block block, int meta)
+    public void onBlockAdded(World world, int x, int y, int z)
     {
-        TileEntity tile =  world.func_147438_o(x, y, z);
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile != null && tile instanceof TileSoundPlayer)
+        {
+            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
+        }
+    }
+
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
+    {
+        TileEntity tile = world.getTileEntity(x, y, z);
+        if (tile != null && tile instanceof TileSoundPlayer)
+        {
+            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
+        }
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta)
+    {
+        TileEntity tile =  world.getTileEntity(x, y, z);
         if (tile != null && tile instanceof TileSoundPlayer)
         {
             ((TileSoundPlayer)tile).stopCurrentSound();
         }
-        super.func_149749_a(world, x, y, z, block, meta);
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     private IIcon blockTop;
     private IIcon blockSide;
 
-    //registerIcons()
     @Override
     @SideOnly(Side.CLIENT)
-    public void func_149651_a(IIconRegister iconRegister)
+    public void registerBlockIcons(IIconRegister iconRegister)
     {
-        blockTop = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_top", getUnwrappedUnlocalizedName(this.func_149739_a())));
-        blockSide = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_side", getUnwrappedUnlocalizedName(this.func_149739_a())));
+        blockTop = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_top", getUnwrappedUnlocalizedName(this.getUnlocalizedName())));
+        blockSide = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_side", getUnwrappedUnlocalizedName(this.getUnlocalizedName())));
     }
 
-    //getIcon()
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon func_149691_a(int side, int metaData)
+    public IIcon getIcon(int side, int metaData)
     {
         if (ForgeDirection.getOrientation(side) == ForgeDirection.UP || ForgeDirection.getOrientation(side) == ForgeDirection.DOWN)
         {

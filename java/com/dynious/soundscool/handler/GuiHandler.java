@@ -28,7 +28,7 @@ public class GuiHandler implements IGuiHandler
             case 0:
                 return new GuiSounds(player);
             case 1:
-                TileEntity tile = world.func_147438_o(x, y, z);
+                TileEntity tile = world.getTileEntity(x, y, z);
                 if (tile != null && tile instanceof TileSoundPlayer)
                 {
                     return new GuiSoundPlayer((TileSoundPlayer)tile);

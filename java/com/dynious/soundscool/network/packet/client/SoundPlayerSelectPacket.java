@@ -18,10 +18,10 @@ public class SoundPlayerSelectPacket implements IPacket
 
     public SoundPlayerSelectPacket(TileSoundPlayer tile)
     {
-        this.dimensionId = tile.func_145831_w().provider.dimensionId;
-        this.x = tile.field_145851_c;
-        this.y = tile.field_145848_d;
-        this.z = tile.field_145849_e;
+        this.dimensionId = tile.getWorldObj().provider.dimensionId;
+        this.x = tile.xCoord;
+        this.y = tile.yCoord;
+        this.z = tile.zCoord;
         this.soundName = tile.getSelectedSound().getSoundName();
     }
 
@@ -44,7 +44,7 @@ public class SoundPlayerSelectPacket implements IPacket
 
         if (world != null)
         {
-            TileEntity tile = world.func_147438_o(x, y, z);
+            TileEntity tile = world.getTileEntity(x, y, z);
             if (tile != null && tile instanceof TileSoundPlayer)
             {
                 ((TileSoundPlayer)tile).selectSound(soundName);

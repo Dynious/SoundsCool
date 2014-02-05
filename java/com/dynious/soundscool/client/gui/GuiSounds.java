@@ -52,18 +52,12 @@ public class GuiSounds extends GuiScreen implements IListGui
     {
         super.initGui();
         soundsList = new GuiLocalSoundsList(this, 150);
-        this.field_146292_n.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.getStringParams("gui.done")));
-        this.field_146292_n.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
-        this.field_146292_n.add(playButton = new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
-        playButton.field_146124_l = false;
-        this.field_146292_n.add(uploadButton = new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
-        uploadButton.field_146124_l = false;
-    }
-
-    @Override
-    public void updateScreen()
-    {
-        super.updateScreen();
+        this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
+        this.buttonList.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
+        this.buttonList.add(playButton = new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
+        playButton.enabled = false;
+        this.buttonList.add(uploadButton = new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
+        uploadButton.enabled = false;
     }
 
     @Override
@@ -99,15 +93,15 @@ public class GuiSounds extends GuiScreen implements IListGui
     }
 
     @Override
-    protected void func_146284_a(GuiButton button)
+    protected void actionPerformed(GuiButton button)
     {
-        if (button.field_146124_l)
+        if (button.enabled)
         {
-            switch (button.field_146127_k)
+            switch (button.id)
             {
                 case 0:
-                    this.field_146297_k.func_147108_a(null);
-                    this.field_146297_k.setIngameFocus();
+                    this.mc.displayGuiScreen(null);
+                    this.mc.setIngameFocus();
                     break;
                 case 1:
                     if (Minecraft.getMinecraft().isFullScreen())
@@ -159,34 +153,34 @@ public class GuiSounds extends GuiScreen implements IListGui
         {
             if (selectedSound.hasRemote())
             {
-                uploadButton.field_146126_j = "Remove";
-                uploadButton.field_146124_l = selectedSound.getRemoteCategory().equals(player.getDisplayName());
+                uploadButton.displayString = "Remove";
+                uploadButton.enabled = selectedSound.getRemoteCategory().equals(player.getDisplayName());
             }
             else
             {
-                uploadButton.field_146126_j = "Upload";
-                uploadButton.field_146124_l = true;
+                uploadButton.displayString = "Upload";
+                uploadButton.enabled = true;
             }
-            playButton.field_146124_l = true;
+            playButton.enabled = true;
         }
         else
         {
-            uploadButton.field_146126_j = "Upload";
-            uploadButton.field_146124_l = false;
-            playButton.field_146124_l = false;
+            uploadButton.displayString = "Upload";
+            uploadButton.enabled = false;
+            playButton.enabled = false;
         }
     }
 
     @Override
     public Minecraft getMinecraftInstance()
     {
-        return field_146297_k;
+        return mc;
     }
 
     @Override
     public FontRenderer getFontRenderer()
     {
-        return field_146289_q;
+        return fontRendererObj;
     }
 
     @Override
@@ -214,19 +208,19 @@ public class GuiSounds extends GuiScreen implements IListGui
     @Override
     public int getWidth()
     {
-        return field_146294_l;
+        return width;
     }
 
     @Override
     public int getHeight()
     {
-        return field_146295_m;
+        return height;
     }
 
     @Override
     public void drawBackground()
     {
-        func_146276_q_();
+        drawDefaultBackground();
     }
 
     @Override
