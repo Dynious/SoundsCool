@@ -3,6 +3,7 @@ package com.dynious.soundscool.handler;
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.helper.SoundHelper;
 import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
 import com.dynious.soundscool.network.packet.server.SoundRemovedPacket;
 import com.dynious.soundscool.sound.Sound;
@@ -182,7 +183,8 @@ public class SoundHandler
         File category;
         if (Minecraft.getMinecraft().func_147104_D() != null)
         {
-            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverName);
+            //TODO: make this not return null, dammit MC!
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
         }
         else
         {
@@ -195,10 +197,15 @@ public class SoundHandler
         File newFile = new File(category.getAbsolutePath() + File.separator + file.getName());
         try
         {
-            if (!newFile.exists() || !Files.equal(file, newFile))
+            //TODO: FIXXXX
+            if ((!newFile.exists() || !Files.equal(file, newFile)) && !SoundHelper.isSoundInSoundsFolder(file))
             {
                 Files.copy(file, newFile);
                 findSounds();
+            }
+            else
+            {
+                return new Sound(file);
             }
         } catch (IOException e)
         {

@@ -28,4 +28,17 @@ public class SoundHelper
         }
         return 0;
     }
+
+    public static boolean isSoundInSoundsFolder(File soundFile)
+    {
+        String path = soundFile.getAbsolutePath();
+
+        if (path.endsWith("sounds") || path.endsWith("sounds" + File.separator))
+        {
+            return true;
+        }
+        path = path.substring(0, path.lastIndexOf(File.separator));
+        path = path.substring(path.lastIndexOf(File.separator) + 1);
+        return path.equals("sounds");
+    }
 }
