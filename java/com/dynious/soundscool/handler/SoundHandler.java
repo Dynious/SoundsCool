@@ -167,7 +167,7 @@ public class SoundHandler
         Sound sound = SoundHandler.getSound(soundName);
         if (sound.hasLocal())
         {
-            SoundPlayer.playSound(sound.getSoundLocation(), identifier, x, y, z);
+            SoundPlayer.playSound(sound.getSoundLocation(), identifier, x, y, z, true);
         }
         else if (sound.getState() != Sound.SoundState.DOWNLOADING)
         {

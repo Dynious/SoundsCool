@@ -4,6 +4,7 @@ import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.client.audio.SoundPlayer;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.helper.SoundHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.network.packet.client.RemoveSoundPacket;
 import com.dynious.soundscool.sound.Sound;
@@ -29,6 +30,8 @@ public class GuiSounds extends GuiScreen implements IListGui
     private EntityPlayer player;
     private GuiButton uploadButton;
     private GuiButton playButton;
+    private UUID currentlyPlayerSoundId;
+    private long timeSoundFinishedPlaying;
 
     public GuiSounds(EntityPlayer player)
     {
@@ -47,6 +50,7 @@ public class GuiSounds extends GuiScreen implements IListGui
         SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
@@ -90,6 +94,10 @@ public class GuiSounds extends GuiScreen implements IListGui
                 this.getFontRenderer().drawString(space, getWidth()/2 + 100 - (this.getFontRenderer().getStringWidth(space)/2), 120, 0xFFFFFF);
             }
         }
+        if (playButton != null && playButton.displayString.equalsIgnoreCase("Stop Sound") && System.currentTimeMillis() > timeSoundFinishedPlaying)
+        {
+            playButton.displayString = "Play Sound";
+        }
     }
 
     @Override
@@ -123,7 +131,19 @@ public class GuiSounds extends GuiScreen implements IListGui
                 case 2:
                     if (selectedSound != null)
                     {
-                        SoundPlayer.playSound(selectedSound.getSoundLocation(), UUID.randomUUID().toString(), (float)player.posX, (float)player.posY, (float)player.posZ);
+                        if (System.currentTimeMillis() > timeSoundFinishedPlaying)
+                        {
+                            currentlyPlayerSoundId = UUID.randomUUID();
+                            timeSoundFinishedPlaying = (long)(SoundHelper.getSoundLength(selectedSound.getSoundLocation())*1000) + System.currentTimeMillis();
+                            SoundPlayer.playSound(selectedSound.getSoundLocation(), currentlyPlayerSoundId.toString(), (float)player.posX, (float)player.posY, (float)player.posZ, false);
+                            playButton.displayString = "Stop Sound";
+                        }
+                        else
+                        {
+                            timeSoundFinishedPlaying = 0;
+                            playButton.displayString = "Play Sound";
+                            SoundPlayer.stopSound(currentlyPlayerSoundId.toString());
+                        }
                     }
                     break;
                 case 3:
@@ -227,5 +247,14 @@ public class GuiSounds extends GuiScreen implements IListGui
     public boolean doesGuiPauseGame()
     {
         return false;
+    }
+
+    @Override
+    public void onGuiClosed()
+    {
+        if (System.currentTimeMillis() < timeSoundFinishedPlaying)
+        {
+            SoundPlayer.stopSound(currentlyPlayerSoundId.toString());
+        }
     }
 }

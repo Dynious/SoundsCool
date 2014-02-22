@@ -59,19 +59,26 @@ public class TileSoundPlayer extends TileEntity
 
     public void playCurrentSound()
     {
-        if (selectedSound != null && timeSoundFinishedPlaying < System.currentTimeMillis())
+        if (selectedSound != null)
         {
-            if (SoundHandler.getSound(selectedSound.getSoundName()) != null)
+            if (timeSoundFinishedPlaying < System.currentTimeMillis())
             {
-                lastSoundIdentifier = UUID.randomUUID().toString();
-                SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-                SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(getWorldObj().provider.dimensionId, xCoord, yCoord, zCoord, 64));
-                SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(selectedSound.getSoundName(), lastSoundIdentifier, xCoord, yCoord, zCoord));
-                timeSoundFinishedPlaying = (long)(SoundHelper.getSoundLength(selectedSound.getSoundLocation())*1000) + System.currentTimeMillis();
+                if (SoundHandler.getSound(selectedSound.getSoundName()) != null)
+                {
+                    lastSoundIdentifier = UUID.randomUUID().toString();
+                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+                    SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(getWorldObj().provider.dimensionId, xCoord, yCoord, zCoord, 64));
+                    SoundsCool.proxy.getChannel().writeOutbound(new ServerPlaySoundPacket(selectedSound.getSoundName(), lastSoundIdentifier, xCoord, yCoord, zCoord));
+                    timeSoundFinishedPlaying = (long)(SoundHelper.getSoundLength(selectedSound.getSoundLocation())*1000) + System.currentTimeMillis();
+                }
+                else
+                {
+                selectedSound = null;
+                }
             }
             else
             {
-                selectedSound = null;
+                stopCurrentSound();
             }
         }
     }
@@ -83,6 +90,7 @@ public class TileSoundPlayer extends TileEntity
             SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
             SoundsCool.proxy.getChannel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(new NetworkRegistry.TargetPoint(getWorldObj().provider.dimensionId, xCoord, yCoord, zCoord, 64));
             SoundsCool.proxy.getChannel().writeOutbound(new StopSoundPacket(lastSoundIdentifier));
+            timeSoundFinishedPlaying = 0;
         }
     }
 

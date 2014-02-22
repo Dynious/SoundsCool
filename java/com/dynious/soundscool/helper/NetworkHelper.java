@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class NetworkHelper
 {
-    public static final int PARTITION_SIZE = 10000;
+    public static final int PARTITION_SIZE = 30000;
 
     public static void sendPacketToPlayer(IPacket packet, EntityPlayer player)
     {

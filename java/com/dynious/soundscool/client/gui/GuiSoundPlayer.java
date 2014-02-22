@@ -28,13 +28,14 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
         SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(Minecraft.getMinecraft().thePlayer));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initGui()
     {
         super.initGui();
         soundsList = new GuiRemoteSoundsList(this, 150);
         this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
-        this.buttonList.add(playButton = new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play"));
+        this.buttonList.add(playButton = new GuiButton(1, getWidth() / 2, getHeight() - 72, "Play/Stop"));
         onSelectedSoundChanged();
     }
 
