@@ -8,16 +8,19 @@ import com.dynious.soundscool.helper.SoundHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
 import com.dynious.soundscool.network.packet.client.RemoveSoundPacket;
 import com.dynious.soundscool.sound.Sound;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+
 import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import java.awt.*;
 import java.util.UUID;
 
@@ -47,7 +50,7 @@ public class GuiSounds extends GuiScreen implements IListGui
             }
         };
         fileChooser.setFileFilter(new FileNameExtensionFilter("Sound Files (.ogg, .wav, .mp3)", "ogg", "wav", "mp3"));
-        SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
+        NetworkHelper.syncPlayerSounds(player);
     }
 
     @SuppressWarnings("unchecked")
@@ -157,7 +160,7 @@ public class GuiSounds extends GuiScreen implements IListGui
                         }
                         else
                         {
-                            SoundsCool.proxy.getChannel().writeOutbound(new RemoveSoundPacket(selectedSound.getSoundName()));
+                            SoundsCool.network.sendToServer(new RemoveSoundPacket(selectedSound.getSoundName()));
                             SoundHandler.removeSound(selectedSound);
                             selectSoundIndex(-1);
                         }

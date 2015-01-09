@@ -1,11 +1,16 @@
 package com.dynious.soundscool.network.packet.server;
 
-import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SoundRemovedPacket implements IPacket
+import com.dynious.soundscool.SoundsCool;
+import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
+import com.dynious.soundscool.sound.Sound;
+
+public class SoundRemovedPacket implements IMessage
 {
     String soundName;
 
@@ -19,7 +24,7 @@ public class SoundRemovedPacket implements IPacket
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
@@ -37,12 +42,19 @@ public class SoundRemovedPacket implements IPacket
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(soundName.length());
         for (char c : soundName.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<SoundRemovedPacket, IMessage> {
+        @Override
+        public IMessage onMessage(SoundRemovedPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

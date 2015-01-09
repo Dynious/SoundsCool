@@ -1,19 +1,26 @@
 package com.dynious.soundscool.network.packet;
 
+import io.netty.buffer.ByteBuf;
+
+import java.io.File;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import com.dynious.soundscool.handler.DelayedPlayHandler;
 import com.dynious.soundscool.handler.NetworkHandler;
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
 import com.dynious.soundscool.network.packet.server.SoundReceivedPacket;
-import cpw.mods.fml.common.FMLCommonHandler;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.server.MinecraftServer;
 
-import java.io.File;
-
-public class SoundUploadedPacket implements IPacket
+public class SoundUploadedPacket implements IMessage
 {
     String category;
     String soundName;
@@ -28,7 +35,7 @@ public class SoundUploadedPacket implements IPacket
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int catLength = bytes.readInt();
         char[] catCars = new char[catLength];
@@ -39,7 +46,7 @@ public class SoundUploadedPacket implements IPacket
         category = String.valueOf(catCars);
         if (FMLCommonHandler.instance().getEffectiveSide().isClient() && (category.equalsIgnoreCase("null") || category.isEmpty()))
         {
-            category = Minecraft.getMinecraft().func_147104_D().serverName;
+            category = Minecraft.getMinecraft().getCurrentServerData().serverName;
         }
 
         int fileLength = bytes.readInt();
@@ -58,16 +65,16 @@ public class SoundUploadedPacket implements IPacket
         }
         else
         {
-            EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().getPlayerForUsername(category);
+            EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerByUsername(category);
             if (player != null)
             {
-                NetworkHelper.sendPacketToPlayer(new SoundReceivedPacket(SoundHandler.getSound(soundName)), player);
+                NetworkHelper.sendMessageToPlayer(new SoundReceivedPacket(SoundHandler.getSound(soundName)), player);
             }
         }
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(category.length());
         for (char c : category.toCharArray())
@@ -78,6 +85,13 @@ public class SoundUploadedPacket implements IPacket
         for (char c : soundName.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<SoundUploadedPacket, IMessage> {
+        @Override
+        public IMessage onMessage(SoundUploadedPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.dynious.soundscool.network.packet.client;
 
-import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class RemoveSoundPacket implements IPacket
+import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.sound.Sound;
+
+public class RemoveSoundPacket implements IMessage
 {
     String soundName;
 
@@ -19,7 +22,7 @@ public class RemoveSoundPacket implements IPacket
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
@@ -35,12 +38,19 @@ public class RemoveSoundPacket implements IPacket
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(soundName.length());
         for (char c : soundName.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<RemoveSoundPacket, IMessage> {
+        @Override
+        public IMessage onMessage(RemoveSoundPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

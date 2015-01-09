@@ -1,12 +1,15 @@
 package com.dynious.soundscool.network.packet.server;
 
-import com.dynious.soundscool.client.audio.SoundPlayer;
-import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class StopSoundPacket implements IPacket
+import com.dynious.soundscool.SoundsCool;
+import com.dynious.soundscool.client.audio.SoundPlayer;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
+
+public class StopSoundPacket implements IMessage
 {
     String identifier;
     public StopSoundPacket()
@@ -19,7 +22,7 @@ public class StopSoundPacket implements IPacket
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int soundLength = bytes.readInt();
         char[] fileCars = new char[soundLength];
@@ -33,12 +36,19 @@ public class StopSoundPacket implements IPacket
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(identifier.length());
         for (char c : identifier.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<StopSoundPacket, IMessage> {
+        @Override
+        public IMessage onMessage(StopSoundPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

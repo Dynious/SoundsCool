@@ -8,9 +8,10 @@ import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
 import com.dynious.soundscool.network.packet.server.SoundRemovedPacket;
 import com.dynious.soundscool.sound.Sound;
 import com.google.common.io.Files;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 
 import java.io.File;
@@ -95,7 +96,7 @@ public class SoundHandler
             sounds.remove(sound);
             if (FMLCommonHandler.instance().getEffectiveSide().isServer())
             {
-                NetworkHelper.sendPacketToAll(new SoundRemovedPacket(sound.getSoundName()));
+                NetworkHelper.sendMessageToAll(new SoundRemovedPacket(sound.getSoundName()));
             }
         }
     }
@@ -174,21 +175,21 @@ public class SoundHandler
         {
             sound.setState(Sound.SoundState.DOWNLOADING);
             DelayedPlayHandler.addDelayedPlay(soundName, identifier, x, y, z);
-            SoundsCool.proxy.getChannel().writeOutbound(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));
+            SoundsCool.network.sendToServer(new CheckPresencePacket(soundName, Minecraft.getMinecraft().thePlayer));
         }
     }
     @SideOnly(Side.CLIENT)
     public static Sound setupSound(File file)
     {
         File category;
-        if (Minecraft.getMinecraft().func_147104_D() != null)
+        if (Minecraft.getMinecraft().getCurrentServerData() != null)
         {
             //TODO: make this not return null, dammit MC!
-            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().getCurrentServerData().serverMOTD);
         }
         else
         {
-            category = new File("sounds" + File.separator + Minecraft.getMinecraft().thePlayer.getDisplayName());
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().thePlayer.getDisplayNameString());
         }
         if (!category.exists())
         {

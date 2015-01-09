@@ -1,5 +1,5 @@
 # Block localizations
-tile.soundPlayer.name=Sound Player
+tile.soundscool:soundPlayer.name=Sound Player
 
 # Inventory localizations
 itemGroup.soundscool=Sounds Cool
