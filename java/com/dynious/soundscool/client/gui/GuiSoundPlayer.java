@@ -81,7 +81,6 @@ public class GuiSoundPlayer extends GuiScreen implements IListGui
                 case 1:
                     if (tile.getSelectedSound() != null)
                     {
-                    	NetworkHelper.syncPlayerSounds(Minecraft.getMinecraft().thePlayer);
                     	SoundsCool.network.sendToServer(new SoundPlayerPlayPacket(tile));
                     }
                     break;

@@ -53,7 +53,7 @@ public class NetworkHelper
     
     public static void syncAllPlayerSounds()
     {
-    	NetworkHelper.sendMessageToAll(new UploadedSoundsPacket());
+    	sendMessageToAll(new UploadedSoundsPacket());
     }
 
     @SideOnly(Side.CLIENT)
