@@ -1,42 +1,45 @@
 package com.dynious.soundscool.command;
 
-import com.dynious.soundscool.helper.NetworkHelper;
-import com.dynious.soundscool.lib.Commands;
-import com.dynious.soundscool.network.packet.server.OpenGUIPacket;
+import java.util.List;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.BlockPos;
 
-import java.util.List;
+import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.lib.Commands;
+import com.dynious.soundscool.network.packet.server.OpenGUIPacket;
 
 public class CommandSoundsCool extends CommandBase
 {
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return Commands.SOUNDS;
     }
 
     @Override
-    public boolean canCommandSenderUseCommand(ICommandSender commandSender)
+    public boolean canCommandSenderUse(ICommandSender commandSender)
     {
         return true;
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    public List addTabCompletionOptions(ICommandSender commandSender, String[] args)
+    public List addTabCompletionOptions(ICommandSender commandSender, String[] args, BlockPos pos)
     {
         return null;
     }
 
     @Override
-    public void processCommand(ICommandSender commandSender, String[] args)
+    public void execute(ICommandSender commandSender, String[] args)
     {
         if (commandSender instanceof EntityPlayer)
         {
-            NetworkHelper.sendPacketToPlayer(new OpenGUIPacket(0), (EntityPlayer) commandSender);
+            NetworkHelper.sendMessageToPlayer(new OpenGUIPacket(0), (EntityPlayerMP) commandSender);
         }
     }
 

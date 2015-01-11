@@ -1,10 +1,14 @@
 package com.dynious.soundscool.network.packet.server;
 
-import com.dynious.soundscool.handler.DelayedPlayHandler;
-import com.dynious.soundscool.network.packet.IPacket;
 import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SoundNotFoundPacket implements IPacket
+import com.dynious.soundscool.handler.DelayedPlayHandler;
+import com.dynious.soundscool.network.packet.client.CheckPresencePacket;
+
+public class SoundNotFoundPacket implements IMessage
 {
     String soundName;
     public SoundNotFoundPacket()
@@ -17,7 +21,7 @@ public class SoundNotFoundPacket implements IPacket
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
@@ -30,12 +34,19 @@ public class SoundNotFoundPacket implements IPacket
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(soundName.length());
         for (char c : soundName.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<SoundNotFoundPacket, IMessage> {
+        @Override
+        public IMessage onMessage(SoundNotFoundPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

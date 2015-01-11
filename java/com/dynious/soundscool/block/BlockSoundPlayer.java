@@ -1,42 +1,45 @@
 package com.dynious.soundscool.block;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
 import com.dynious.soundscool.SoundsCool;
 import com.dynious.soundscool.lib.Names;
 import com.dynious.soundscool.lib.Reference;
 import com.dynious.soundscool.tileentity.TileSoundPlayer;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockSoundPlayer extends BlockContainer
+public class BlockSoundPlayer extends Block implements ITileEntityProvider
 {
     public BlockSoundPlayer()
     {
         super(Material.rock);
         this.setCreativeTab(SoundsCool.tabSoundsCool);
-        this.setBlockName(Names.soundPlayer);
+        this.setHardness(2F);
+        this.setResistance(10F);
+        this.setStepSound(Block.soundTypeStone);
+        this.setUnlocalizedName(Reference.modid+":"+Names.soundPlayer);
     }
 
+    
     @Override
     public TileEntity createNewTileEntity(World var1, int var2)
     {
         return new TileSoundPlayer();
     }
-
+     
 
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z,
-                                 EntityPlayer player, int par6, float par7, float par8, float par9)
+    public boolean onBlockActivated(World world, BlockPos pos,
+    		IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (player.isSneaking())
         {
@@ -44,75 +47,56 @@ public class BlockSoundPlayer extends BlockContainer
         }
         else
         {
-            TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(pos);
             if (tile != null && tile instanceof TileSoundPlayer)
             {
-                player.openGui(SoundsCool.instance, 1, world, x, y, z);
+                player.openGui(SoundsCool.instance, 1, world, pos.getX(), pos.getY(), pos.getZ());
             }
         }
         return true;
     }
 
     @Override
-    public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side)
+    public boolean canConnectRedstone(IBlockAccess world, BlockPos p, EnumFacing side)
     {
         return true;
     }
 
     @Override
-    public void onBlockAdded(World world, int x, int y, int z)
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state)
     {
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile != null && tile instanceof TileSoundPlayer)
         {
-            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
+        	if(world.isBlockIndirectlyGettingPowered(pos) > 0)
+        		((TileSoundPlayer)tile).setPowered(true);
+        	else
+            ((TileSoundPlayer)tile).setPowered(false);
         }
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block)
     {
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile != null && tile instanceof TileSoundPlayer)
         {
-            ((TileSoundPlayer)tile).setPowered(world.isBlockIndirectlyGettingPowered(x, y, z));
+        	if(world.isBlockIndirectlyGettingPowered(pos) > 0)
+        		((TileSoundPlayer)tile).setPowered(true);
+        	else
+        		((TileSoundPlayer)tile).setPowered(false);
         }
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta)
+    public void breakBlock(World world, BlockPos pos, IBlockState state)
     {
-        TileEntity tile =  world.getTileEntity(x, y, z);
+        TileEntity tile =  world.getTileEntity(pos);
         if (tile != null && tile instanceof TileSoundPlayer)
         {
             ((TileSoundPlayer)tile).stopCurrentSound();
         }
-        super.breakBlock(world, x, y, z, block, meta);
-    }
-
-    private IIcon blockTop;
-    private IIcon blockSide;
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister)
-    {
-        blockTop = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_top", getUnwrappedUnlocalizedName(this.getUnlocalizedName())));
-        blockSide = iconRegister.registerIcon(Reference.modid + ":" + String.format("%s_side", getUnwrappedUnlocalizedName(this.getUnlocalizedName())));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int side, int metaData)
-    {
-        if (ForgeDirection.getOrientation(side) == ForgeDirection.UP || ForgeDirection.getOrientation(side) == ForgeDirection.DOWN)
-        {
-            return blockTop;
-        }
-        else
-        {
-            return blockSide;
-        }
+        super.breakBlock(world, pos, state);
     }
 
     protected String getUnwrappedUnlocalizedName(String unlocalizedName)

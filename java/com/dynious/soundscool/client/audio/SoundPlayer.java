@@ -1,9 +1,9 @@
 package com.dynious.soundscool.client.audio;
 
 import com.dynious.soundscool.handler.SoundHandler;
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundManager;
 import paulscode.sound.SoundSystem;

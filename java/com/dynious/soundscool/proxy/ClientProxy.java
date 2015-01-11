@@ -1,7 +1,12 @@
 package com.dynious.soundscool.proxy;
 
 import com.dynious.soundscool.handler.event.SoundEventHandler;
-import cpw.mods.fml.relauncher.Side;
+import com.dynious.soundscool.lib.Names;
+import com.dynious.soundscool.lib.Reference;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -34,10 +39,10 @@ public class ClientProxy extends CommonProxy
             e.printStackTrace();
         }
     }
-
+    
     @Override
-    public EmbeddedChannel getChannel()
+    public void registerBlocks()
     {
-        return channels.get(Side.CLIENT);
+    	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(net.minecraft.item.Item.getByNameOrId(Reference.modid+":"+Names.soundPlayer), 0, new ModelResourceLocation(Reference.modid+":"+Names.soundPlayer, "inventory"));
     }
 }

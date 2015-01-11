@@ -1,13 +1,17 @@
 package com.dynious.soundscool.network.packet.client;
 
-import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.tileentity.TileSoundPlayer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class SoundPlayerSelectPacket implements IPacket
+import com.dynious.soundscool.tileentity.TileSoundPlayer;
+
+public class SoundPlayerSelectPacket implements IMessage
 {
     int dimensionId;
     int x, y, z;
@@ -18,15 +22,15 @@ public class SoundPlayerSelectPacket implements IPacket
 
     public SoundPlayerSelectPacket(TileSoundPlayer tile)
     {
-        this.dimensionId = tile.getWorldObj().provider.dimensionId;
-        this.x = tile.xCoord;
-        this.y = tile.yCoord;
-        this.z = tile.zCoord;
+        this.dimensionId = tile.getWorld().provider.getDimensionId();
+        this.x = tile.getPos().getX();;
+        this.y = tile.getPos().getY();;
+        this.z = tile.getPos().getZ();;
         this.soundName = tile.getSelectedSound().getSoundName();
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         dimensionId = bytes.readInt();
         x = bytes.readInt();
@@ -44,7 +48,7 @@ public class SoundPlayerSelectPacket implements IPacket
 
         if (world != null)
         {
-            TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(new BlockPos(x,y,z));
             if (tile != null && tile instanceof TileSoundPlayer)
             {
                 ((TileSoundPlayer)tile).selectSound(soundName);
@@ -53,7 +57,7 @@ public class SoundPlayerSelectPacket implements IPacket
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(dimensionId);
         bytes.writeInt(x);
@@ -64,6 +68,13 @@ public class SoundPlayerSelectPacket implements IPacket
         for (char c : soundName.toCharArray())
         {
             bytes.writeChar(c);
+        }
+    }
+    
+    public static class Handler implements IMessageHandler<SoundPlayerSelectPacket, IMessage> {
+        @Override
+        public IMessage onMessage(SoundPlayerSelectPacket message, MessageContext ctx) {
+            return null;
         }
     }
 }

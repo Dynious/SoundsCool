@@ -1,0 +1,12 @@
+{
+"parent": "block/cube",
+"textures": {
+"up": "soundscool:blocks/soundPlayer_top",
+"down": "soundscool:blocks/soundPlayer",
+"east": "soundscool:blocks/soundPlayer",
+"west": "soundscool:blocks/soundPlayer",
+"north": "soundscool:blocks/soundPlayer",
+"south": "soundscool:blocks/soundPlayer",
+"particle": "soundscool:blocks/soundPlayer"
+}
+}

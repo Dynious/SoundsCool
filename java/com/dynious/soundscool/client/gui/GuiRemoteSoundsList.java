@@ -2,7 +2,7 @@ package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.handler.SoundHandler;
 import com.dynious.soundscool.sound.Sound;
-import cpw.mods.fml.client.GuiScrollingList;
+import net.minecraftforge.fml.client.GuiScrollingList;
 import net.minecraft.client.renderer.Tessellator;
 
 public class GuiRemoteSoundsList extends GuiScrollingList

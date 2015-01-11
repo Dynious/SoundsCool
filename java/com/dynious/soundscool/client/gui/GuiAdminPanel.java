@@ -1,7 +1,9 @@
 package com.dynious.soundscool.client.gui;
 
 import com.dynious.soundscool.SoundsCool;
+import com.dynious.soundscool.helper.NetworkHelper;
 import com.dynious.soundscool.network.packet.client.GetUploadedSoundsPacket;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -16,7 +18,7 @@ public class GuiAdminPanel extends GuiScreen
     public GuiAdminPanel(EntityPlayer player)
     {
         this.player = player;
-        SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
+        NetworkHelper.syncPlayerSounds(player);
     }
 
     @Override
@@ -24,7 +26,7 @@ public class GuiAdminPanel extends GuiScreen
     {
         super.initGui();
         this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
-        maxSounds = new GuiTextField(fontRendererObj, getWidth()/2, getHeight()/2, 20, 15);
+        maxSounds = new GuiTextField(0, fontRendererObj, getWidth()/2, getHeight()/2, 20, 15);
     }
 
     @Override

@@ -1,16 +1,20 @@
 package com.dynious.soundscool.network.packet.client;
 
-import com.dynious.soundscool.handler.SoundHandler;
-import com.dynious.soundscool.helper.NetworkHelper;
-import com.dynious.soundscool.network.packet.IPacket;
-import com.dynious.soundscool.network.packet.server.SoundNotFoundPacket;
-import com.dynious.soundscool.sound.Sound;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class CheckPresencePacket implements IPacket
+import com.dynious.soundscool.handler.SoundHandler;
+import com.dynious.soundscool.helper.NetworkHelper;
+import com.dynious.soundscool.network.packet.server.SoundNotFoundPacket;
+import com.dynious.soundscool.sound.Sound;
+
+public class CheckPresencePacket implements IMessage
 {
     String fileName;
     int entityID;
@@ -24,11 +28,11 @@ public class CheckPresencePacket implements IPacket
     {
         this.fileName = soundName;
         this.entityID = player.getEntityId();
-        this.worldID = player.getEntityWorld().provider.dimensionId;
+        this.worldID = player.getEntityWorld().provider.getDimensionId();
     }
 
     @Override
-    public void readBytes(ByteBuf bytes)
+    public void fromBytes(ByteBuf bytes)
     {
         int fileLength = bytes.readInt();
         char[] fileCars = new char[fileLength];
@@ -40,24 +44,24 @@ public class CheckPresencePacket implements IPacket
         entityID = bytes.readInt();
         worldID = bytes.readInt();
 
-        Entity entity = DimensionManager.getProvider(worldID).worldObj.getEntityByID(entityID);
+        Entity entity = DimensionManager.getWorld(worldID).getEntityByID(entityID);
         if (entity != null && entity instanceof EntityPlayer)
         {
             Sound sound = SoundHandler.getSound(fileName);
 
             if (sound != null)
             {
-                NetworkHelper.serverSoundUpload(sound, (EntityPlayer) entity);
+                NetworkHelper.serverSoundUpload(sound, (EntityPlayerMP) entity);
             }
             else
             {
-                NetworkHelper.sendPacketToPlayer(new SoundNotFoundPacket(fileName), (EntityPlayer)entity);
+                NetworkHelper.sendMessageToPlayer(new SoundNotFoundPacket(fileName), (EntityPlayerMP)entity);
             }
         }
     }
 
     @Override
-    public void writeBytes(ByteBuf bytes)
+    public void toBytes(ByteBuf bytes)
     {
         bytes.writeInt(fileName.length());
         for (char c : fileName.toCharArray())
@@ -66,5 +70,12 @@ public class CheckPresencePacket implements IPacket
         }
         bytes.writeInt(entityID);
         bytes.writeInt(worldID);
+    }
+    
+    public static class Handler implements IMessageHandler<CheckPresencePacket, IMessage> {
+        @Override
+        public IMessage onMessage(CheckPresencePacket message, MessageContext ctx) {
+            return null;
+        }
     }
 }
