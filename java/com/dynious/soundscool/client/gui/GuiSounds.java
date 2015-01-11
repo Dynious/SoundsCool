@@ -36,17 +36,26 @@ public class GuiSounds extends GuiScreen implements IListGui
     public GuiSounds(EntityPlayer player)
     {
         this.player = player;
-        fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir) {
-            @Override
-            protected JDialog createDialog(Component parent)
-                    throws HeadlessException {
-                JDialog dialog = super.createDialog(parent);
-                dialog.setLocationByPlatform(true);
-                dialog.setAlwaysOnTop(true);
-                return dialog;
-            }
-        };
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Sound Files (.ogg, .wav, .mp3)", "ogg", "wav", "mp3"));
+        try
+        {
+            fileChooser = new JFileChooser(Minecraft.getMinecraft().mcDataDir)
+            {
+                @Override
+                protected JDialog createDialog(Component parent)
+                        throws HeadlessException
+                {
+                    JDialog dialog = super.createDialog(parent);
+                    dialog.setLocationByPlatform(true);
+                    dialog.setAlwaysOnTop(true);
+                    return dialog;
+                }
+            };
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Sound Files (.ogg, .wav, .mp3)", "ogg", "wav", "mp3"));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Exception when creating FileChooser! Are you running an old version of Windows?");
+        }
         SoundsCool.proxy.getChannel().writeOutbound(new GetUploadedSoundsPacket(player));
     }
 
@@ -57,7 +66,12 @@ public class GuiSounds extends GuiScreen implements IListGui
         super.initGui();
         soundsList = new GuiLocalSoundsList(this, 150);
         this.buttonList.add(new GuiButton(0, getWidth() / 2, getHeight() - 42, I18n.format("gui.done")));
-        this.buttonList.add(new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File"));
+
+        GuiButton fileButton = new GuiButton(1, 10, getHeight() - 42, 150, 20, "Select File");
+        this.buttonList.add(fileButton);
+        if (fileChooser == null)
+            fileButton.enabled = false;
+        
         this.buttonList.add(playButton = new GuiButton(2, getWidth() / 2, getHeight() - 102, "Play Sound"));
         playButton.enabled = false;
         this.buttonList.add(uploadButton = new GuiButton(3, getWidth() / 2, getHeight() - 72, "Upload"));
