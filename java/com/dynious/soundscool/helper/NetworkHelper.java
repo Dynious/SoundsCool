@@ -58,7 +58,7 @@ public class NetworkHelper
             byte[] bytes = ArrayUtils.subarray(soundBytes, i, i + Math.min(PARTITION_SIZE, soundBytes.length - i));
             SoundsCool.proxy.getChannel().writeOutbound(new SoundChunkPacket(sound.getSoundName(), bytes));
         }
-        String category = FMLCommonHandler.instance().getEffectiveSide().isClient()? Minecraft.getMinecraft().thePlayer.getDisplayName(): MinecraftServer.getServer().getMOTD();
+        String category = FMLCommonHandler.instance().getEffectiveSide().isClient()? Minecraft.getMinecraft().thePlayer.getDisplayName(): "null";
         SoundsCool.proxy.getChannel().writeOutbound(new SoundUploadedPacket(sound.getSoundName(), category));
     }
 

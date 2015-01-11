@@ -166,11 +166,21 @@ public class SoundHandler
     public static void playSound(String soundName, String identifier, int x, int y, int z)
     {
         Sound sound = SoundHandler.getSound(soundName);
-        if (sound.hasLocal())
+        if (sound != null)
         {
-            SoundPlayer.playSound(sound.getSoundLocation(), identifier, x, y, z, true);
+            if (sound.hasLocal())
+            {
+                SoundPlayer.playSound(sound.getSoundLocation(), identifier, x, y, z, true);
+                return;
+            }
         }
-        else if (sound.getState() != Sound.SoundState.DOWNLOADING)
+        else
+        {
+            SoundHandler.addRemoteSound(soundName, Minecraft.getMinecraft().func_147104_D().serverIP);
+            sound = SoundHandler.getSound(soundName);
+        }
+
+        if (sound.getState() != Sound.SoundState.DOWNLOADING)
         {
             sound.setState(Sound.SoundState.DOWNLOADING);
             DelayedPlayHandler.addDelayedPlay(soundName, identifier, x, y, z);
@@ -184,7 +194,7 @@ public class SoundHandler
         if (Minecraft.getMinecraft().func_147104_D() != null)
         {
             //TODO: make this not return null, dammit MC!
-            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverMOTD);
+            category = new File("sounds" + File.separator + Minecraft.getMinecraft().func_147104_D().serverIP);
         }
         else
         {
